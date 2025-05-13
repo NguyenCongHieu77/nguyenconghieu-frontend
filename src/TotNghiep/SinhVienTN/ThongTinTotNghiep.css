@@ -1,0 +1,59 @@
+/* ThongTinTotNghiep.css */
+
+.thong-tin-tot-nghiep-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  transition: padding 0.2s ease;
+}
+
+.thong-tin-tot-nghiep-card h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #222;
+}
+
+.thong-tin-tot-nghiep-card p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.thong-tin-tot-nghiep-card a {
+  color: #007bff;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.thong-tin-tot-nghiep-card a:hover {
+  text-decoration: underline;
+}
+
+.status-text {
+  text-align: center;
+  font-size: 1.125rem;
+  color: #555;
+  margin: 2rem 0;
+}
+
+@media (max-width: 600px) {
+  .thong-tin-tot-nghiep-card {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .thong-tin-tot-nghiep-card h2 {
+    font-size: 1.25rem;
+  }
+
+  .thong-tin-tot-nghiep-card p {
+    font-size: 0.9rem;
+  }
+}

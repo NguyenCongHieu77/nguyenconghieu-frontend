@@ -1,0 +1,84 @@
+.change-password-container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    font-family: "Segoe UI", sans-serif;
+    transition: 0.3s ease;
+  }
+  
+  .change-password-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+  }
+  
+  .input-group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 85%;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.25s ease-in-out;
+    outline: none;
+  }
+  
+  .input-group input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.2);
+  }
+  
+  .input-group span {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+    user-select: none;
+  }
+  
+  .change-password-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .change-password-btn:hover {
+    background-color: #2980b9;
+  }
+  
+  .change-password-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+  
+  .success-message {
+    color: #2ecc71;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 500;
+  }
+  

@@ -1,0 +1,110 @@
+.donvi-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .search-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .search-bar input {
+    padding: 6px 12px;
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .count {
+    font-weight: bold;
+  }
+  
+  .donvi-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .donvi-table th,
+  .donvi-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .donvi-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+  .add-btn {
+    margin-left: 10px;
+    padding: 6px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .add-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .add-form {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
+  
+  .add-form input,
+  .add-form select {
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .search-bar input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .add-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .count {
+    font-size: 14px;
+    color: #000000;
+    margin-left: auto;
+  }
+  
