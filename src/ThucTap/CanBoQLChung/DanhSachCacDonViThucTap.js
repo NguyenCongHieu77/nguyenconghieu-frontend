@@ -23,7 +23,7 @@ const DanhSachCacDonViThucTap = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5225/api/DonViThucTap");
+        const res = await axios.get("http://118.69.126.49:5225/api/DonViThucTap");
         setDonVis(res.data);
       } catch (err) {
         console.error("Lỗi khi gọi API:", err);
@@ -58,7 +58,7 @@ const DanhSachCacDonViThucTap = () => {
 
     try {
       await axios.put(
-        `http://localhost:5225/api/DonViThucTap/update/${id}`,
+        `http://118.69.126.49:5225/api/DonViThucTap/update/${id}`,
         updatedData
       );
       setDonVis((prev) =>
@@ -146,7 +146,7 @@ const DanhSachCacDonViThucTap = () => {
   const handleAddSubmit = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5225/api/DonViThucTap/create",
+        "http://118.69.126.49:5225/api/DonViThucTap/create",
         newDonVi
       );
       setDonVis((prev) => [...prev, res.data]);

@@ -12,7 +12,7 @@ const ThongTinTotNghiep = () => {
         const token = localStorage.getItem('accessToken');
         const mssv = localStorage.getItem('username');
         const res = await axios.get(
-          'http://localhost:5225/api/ChiTietSinhVienDKTN/get-all',
+          'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all',
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = res.data;

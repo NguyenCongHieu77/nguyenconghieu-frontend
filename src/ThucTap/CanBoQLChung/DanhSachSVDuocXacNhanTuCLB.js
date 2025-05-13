@@ -16,9 +16,9 @@ function DanhSachSVDuocXacNhanTuCLB() {
   const [expandedMssv, setExpandedMssv] = useState(null);
   const [previewLink, setPreviewLink] = useState('');
 
-  const apiChiTiet = 'http://localhost:5225/api/ChiTietThucTap';
-  const apiHoSo = 'http://localhost:5225/api/ChiTietHoSoThucTapBanDau';
-  const apiUpsertGV = 'http://localhost:5225/api/ChiTietThucTap/gv-upsert';
+  const apiChiTiet = 'http://118.69.126.49:5225/api/ChiTietThucTap';
+  const apiHoSo = 'http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau';
+  const apiUpsertGV = 'http://118.69.126.49:5225/api/ChiTietThucTap/gv-upsert';
 
   // Load dữ liệu chi tiết và hồ sơ ban đầu
   useEffect(() => {

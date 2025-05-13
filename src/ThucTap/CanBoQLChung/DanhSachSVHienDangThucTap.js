@@ -17,7 +17,7 @@ function DanhSachSVHienDangThucTap() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5225/api/ChiTietThucTap/get-all");
+        const res = await axios.get("http://118.69.126.49:5225/api/ChiTietThucTap/get-all");
         setDsChiTiet(res.data);
       } catch (err) {
         console.error("Lỗi khi lấy dữ liệu:", err);
@@ -77,7 +77,7 @@ function DanhSachSVHienDangThucTap() {
 
   const downloadHoSo = async (mssv) => {
     try {
-      const response = await axios.get(`http://localhost:5225/api/ChiTietThucTap/download-ho-so/${mssv}`, {
+      const response = await axios.get(`http://118.69.126.49:5225/api/ChiTietThucTap/download-ho-so/${mssv}`, {
         responseType: "blob",
       });
       const blob = new Blob([response.data], { type: response.headers["content-type"] });
@@ -90,7 +90,7 @@ function DanhSachSVHienDangThucTap() {
 
   const downloadAllHoSo = async () => {
     try {
-      const response = await axios.get(`http://localhost:5225/api/ChiTietThucTap/download-ho-so/all`, {
+      const response = await axios.get(`http://118.69.126.49:5225/api/ChiTietThucTap/download-ho-so/all`, {
         responseType: "blob",
       });
       const blob = new Blob([response.data], { type: response.headers["content-type"] });

@@ -26,7 +26,7 @@ function LayoutTotNghiep() {
     const mssv = localStorage.getItem('username');
     if (mssv) {
       axios
-        .get(`http://localhost:5225/api/ThongBao/thongbao/${mssv}`)
+        .get(`http://118.69.126.49:5225/api/ThongBao/thongbao/${mssv}`)
         .then(res => {
           setNotifs(res.data);
           setNotifCount(res.data.length);

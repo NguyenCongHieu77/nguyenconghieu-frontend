@@ -21,13 +21,13 @@ function ThongTinThucTap() {
   const [pendingChoice, setPendingChoice] = useState(null);
 
   const mssv = localStorage.getItem("username");
-  const apiChiTiet = "http://localhost:5225/api/ChiTietThucTap/get-all";
-  const apiGio = "http://localhost:5225/api/GioThucTapSinhVien/get-all";
-  const apiHoSoBanDau = "http://localhost:5225/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau";
-  const apiHoSoKetThuc = "http://localhost:5225/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc";
-  const apiUpsertType = "http://localhost:5225/api/ChiTietHoSoThucTapBanDau/chon-thuc-tap-trong-hoac-ngoai";
-  const apiCapNhatHoSoBanDau = "http://localhost:5225/api/ChiTietHoSoThucTapBanDau";
-  const apiCapNhatHoSoKetThuc = "http://localhost:5225/api/ChiTietHoSoThucTapKetThuc/cap-nhat-ho-so";
+  const apiChiTiet = "http://118.69.126.49:5225/api/ChiTietThucTap/get-all";
+  const apiGio = "http://118.69.126.49:5225/api/GioThucTapSinhVien/get-all";
+  const apiHoSoBanDau = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau";
+  const apiHoSoKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc";
+  const apiUpsertType = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/chon-thuc-tap-trong-hoac-ngoai";
+  const apiCapNhatHoSoBanDau = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau";
+  const apiCapNhatHoSoKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/cap-nhat-ho-so";
 
   useEffect(() => {
     // Load chi tiết, giờ, hồ sơ ban đầu và hồ sơ kết thúc

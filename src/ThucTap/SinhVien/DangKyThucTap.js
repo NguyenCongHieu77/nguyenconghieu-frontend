@@ -50,21 +50,21 @@ const DangKyThucTap = () => {
 
   useEffect(() => {
     // Lấy danh sách đợt, loại, giảng viên, đơn vị
-    axios.get('http://localhost:5225/api/DotThucTap')
+    axios.get('http://118.69.126.49:5225/api/DotThucTap')
       .then(res => setDotThucTapList(res.data))
       .catch(console.error);
-    axios.get('http://localhost:5225/api/LoaiThucTap')
+    axios.get('http://118.69.126.49:5225/api/LoaiThucTap')
       .then(res => setLoaiThucTapList(res.data))
       .catch(console.error);
-    axios.get('http://localhost:5225/api/GiangVien')
+    axios.get('http://118.69.126.49:5225/api/GiangVien')
       .then(res => setGiangVienList(res.data))
       .catch(console.error);
-    axios.get('http://localhost:5225/api/DonViThucTap')
+    axios.get('http://118.69.126.49:5225/api/DonViThucTap')
       .then(res => setDonViList(res.data))
       .catch(console.error);
 
     // Kiểm tra nếu đã đăng ký rồi
-    axios.get('http://localhost:5225/api/ChiTietThucTap/get-all')
+    axios.get('http://118.69.126.49:5225/api/ChiTietThucTap/get-all')
       .then(res => {
         setHasRegistered(res.data.some(item => item.mssv === savedUsername));
       })
@@ -114,7 +114,7 @@ const DangKyThucTap = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    axios.post('http://localhost:5225/api/ChiTietThucTap/insert-update', formData)
+    axios.post('http://118.69.126.49:5225/api/ChiTietThucTap/insert-update', formData)
       .then(res => {
         alert(res.data.message);
         setHasRegistered(true);
@@ -329,22 +329,22 @@ export default DangKyThucTap;
 
 //   useEffect(() => {
 //     // Lấy danh sách đợt
-//     axios.get('http://localhost:5225/api/DotThucTap')
+//     axios.get('http://118.69.126.49:5225/api/DotThucTap')
 //       .then(res => setDotThucTapList(res.data))
 //       .catch(console.error);
 
 //     // Lấy danh sách loại thực tập
-//     axios.get('http://localhost:5225/api/LoaiThucTap')
+//     axios.get('http://118.69.126.49:5225/api/LoaiThucTap')
 //       .then(res => setLoaiThucTapList(res.data))
 //       .catch(console.error);
 
 //     // Lấy danh sách giảng viên
-//     axios.get('http://localhost:5225/api/GiangVien')
+//     axios.get('http://118.69.126.49:5225/api/GiangVien')
 //       .then(res => setGiangVienList(res.data))
 //       .catch(console.error);
 
 //     // Lấy và chuẩn hóa danh sách đơn vị thực tập
-//     axios.get('http://localhost:5225/api/DonViThucTap')
+//     axios.get('http://118.69.126.49:5225/api/DonViThucTap')
 //       .then(res => {
 //         const data = res.data.map(dv => ({
 //           ...dv,
@@ -360,7 +360,7 @@ export default DangKyThucTap;
 //       .catch(console.error);
 
 //     // Kiểm tra nếu đã đăng ký rồi
-//     axios.get('http://localhost:5225/api/ChiTietThucTap/get-all')
+//     axios.get('http://118.69.126.49:5225/api/ChiTietThucTap/get-all')
 //       .then(res => {
 //         setHasRegistered(res.data.some(item => item.mssv === savedUsername));
 //       })
@@ -413,7 +413,7 @@ export default DangKyThucTap;
 //   // Gửi form
 //   const handleSubmit = e => {
 //     e.preventDefault();
-//     axios.post('http://localhost:5225/api/ChiTietThucTap/insert-update', formData)
+//     axios.post('http://118.69.126.49:5225/api/ChiTietThucTap/insert-update', formData)
 //       .then(res => {
 //         alert(res.data.message);
 //         setHasRegistered(true);

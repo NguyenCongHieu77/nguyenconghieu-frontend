@@ -24,10 +24,10 @@ const DangKyTotNghiep = () => {
         const token = localStorage.getItem('accessToken');
         const mssv = localStorage.getItem('username');
         const [dotsRes, regsRes] = await Promise.all([
-          axios.get('http://localhost:5225/api/DotDangKyTotNghiep/get-all', {
+          axios.get('http://118.69.126.49:5225/api/DotDangKyTotNghiep/get-all', {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://localhost:5225/api/ChiTietSinhVienDKTN/get-all', {
+          axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all', {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -86,7 +86,7 @@ const DangKyTotNghiep = () => {
       };
       const token = localStorage.getItem('accessToken');
       await axios.post(
-        'http://localhost:5225/api/ChiTietSinhVienDKTN/insert-by-sinhvien',
+        'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/insert-by-sinhvien',
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

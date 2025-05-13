@@ -21,7 +21,7 @@ const DangNhap = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5225/api/Account/login", {
+      const res = await axios.post("http://118.69.126.49:5225/api/Account/login", {
         tenTaiKhoan,
         matKhau,
       });

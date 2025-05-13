@@ -24,13 +24,13 @@ const DanhSachCacDotThucTap = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:5225/api/DotThucTap')
+    axios.get('http://118.69.126.49:5225/api/DotThucTap')
       .then(response => {
         setDotThucTapList(response.data);
       })
       .catch(error => console.error('Lỗi khi tải đợt thực tập:', error));
 
-    axios.get('http://localhost:5225/api/LoaiThucTap')
+    axios.get('http://118.69.126.49:5225/api/LoaiThucTap')
       .then(res => setLoaiThucTapList(res.data))
       .catch(err => console.error('Lỗi khi tải loại thực tập:', err));
   }, []);
@@ -54,7 +54,7 @@ const DanhSachCacDotThucTap = () => {
   };
 
   const handleAddDotThucTap = () => {
-    axios.post('http://localhost:5225/api/DotThucTap', {
+    axios.post('http://118.69.126.49:5225/api/DotThucTap', {
       ...formData,
       maDotThucTap: 0,
       soThang: parseInt(formData.soThang),
@@ -83,7 +83,7 @@ const DanhSachCacDotThucTap = () => {
   };
 
   const handleSaveUpdate = () => {
-    axios.put(`http://localhost:5225/api/DotThucTap/${selectedDot.maDotThucTap}`, {
+    axios.put(`http://118.69.126.49:5225/api/DotThucTap/${selectedDot.maDotThucTap}`, {
       ...selectedDot,
       soThang: parseInt(selectedDot.soThang),
       maLoaiThucTap: parseInt(selectedDot.maLoaiThucTap)
@@ -99,7 +99,7 @@ const DanhSachCacDotThucTap = () => {
 
   const handleDeleteDot = (maDotThucTap) => {
     if (window.confirm('Bạn có chắc chắn muốn xoá đợt thực tập này không?')) {
-      axios.delete(`http://localhost:5225/api/DotThucTap/delete/${maDotThucTap}`)
+      axios.delete(`http://118.69.126.49:5225/api/DotThucTap/delete/${maDotThucTap}`)
         .then(() => {
           setDotThucTapList(prev => prev.filter(dot => dot.maDotThucTap !== maDotThucTap));
           setSelectedDot(null);

@@ -18,9 +18,9 @@ const DanhSachSVDangThucTap = () => {
   const fetchData = async () => {
     try {
       const [svRes, hourRes, periodRes] = await Promise.all([
-        fetch('http://localhost:5225/api/ChiTietThucTap/get-all'),
-        fetch('http://localhost:5225/api/GioThucTapSinhVien/get-all'),
-        fetch('http://localhost:5225/api/LoaiThucTap')
+        fetch('http://118.69.126.49:5225/api/ChiTietThucTap/get-all'),
+        fetch('http://118.69.126.49:5225/api/GioThucTapSinhVien/get-all'),
+        fetch('http://118.69.126.49:5225/api/LoaiThucTap')
       ]);
       const [svData, hourData, periodData] = await Promise.all([
         svRes.json(),
@@ -52,7 +52,7 @@ const DanhSachSVDangThucTap = () => {
       }
 
       const body = { mssv, maDotThucTap, ...newHour };
-      const res = await fetch('http://localhost:5225/api/GioThucTapSinhVien/insert', {
+      const res = await fetch('http://118.69.126.49:5225/api/GioThucTapSinhVien/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
@@ -71,7 +71,7 @@ const DanhSachSVDangThucTap = () => {
 
   const handleUpdate = async (gio) => {
     try {
-      await fetch('http://localhost:5225/api/GioThucTapSinhVien/update', {
+      await fetch('http://118.69.126.49:5225/api/GioThucTapSinhVien/update', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(gio)
@@ -85,7 +85,7 @@ const DanhSachSVDangThucTap = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Xoá giờ thực tập này?')) {
-      await fetch(`http://localhost:5225/api/GioThucTapSinhVien/delete/${id}`, { method: 'DELETE' });
+      await fetch(`http://118.69.126.49:5225/api/GioThucTapSinhVien/delete/${id}`, { method: 'DELETE' });
       fetchData();
     }
   };

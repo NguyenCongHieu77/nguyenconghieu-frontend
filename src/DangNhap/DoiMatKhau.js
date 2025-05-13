@@ -42,7 +42,7 @@ const DoiMatKhau = ({ savedMSSV }) => {
             console.log("Dữ liệu gửi lên API:", requestData);
 
             const response = await axios.post(
-                "http://localhost:5225/api/Account/ChangePassword",
+                "http://118.69.126.49:5225/api/Account/ChangePassword",
                 requestData,
                 {
                     headers: { "Content-Type": "application/json" },
