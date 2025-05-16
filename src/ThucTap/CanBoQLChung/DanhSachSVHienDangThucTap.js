@@ -15,8 +15,8 @@ function DanhSachSVHienDangThucTap() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterDotThucTap, setFilterDotThucTap] = useState("");
   const [filterDonVi, setFilterDonVi] = useState("");
-  const [filterDK, setFilterDK] = useState("");    // new: HS ĐK filter
-  const [filterKT, setFilterKT] = useState("");    // new: HS KT filter
+  const [filterDK, setFilterDK] = useState("");
+  const [filterKT, setFilterKT] = useState("");
   const [expandedMssv, setExpandedMssv] = useState(null);
   const [previewLink, setPreviewLink] = useState("");
 
@@ -25,7 +25,6 @@ function DanhSachSVHienDangThucTap() {
   const apiKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc";
 
   useEffect(() => {
-<<<<<<< HEAD
     const fetchData = async () => {
       try {
         const res = await axios.get("http://118.69.126.49:5225/api/ChiTietThucTap/get-all");
@@ -35,20 +34,19 @@ function DanhSachSVHienDangThucTap() {
       }
     };
     fetchData();
-=======
+
     Promise.all([
       axios.get(`${apiChiTiet}/get-all`),
       axios.get(`${apiHoSo}/get-all-ho-so-ban-dau`),
       axios.get(`${apiKetThuc}/get-all-ho-so-ket-thuc`)
     ])
-    .then(([resCT, resHS, resKT]) => {
-      setDsChiTiet(resCT.data);
-      setDsHoSo(resHS.data);
-      setDsKetThuc(resKT.data);
-    })
-    .catch(err => console.error("Lỗi khi tải dữ liệu:", err))
-    .finally(() => setLoading(false));
->>>>>>> ea1f53b (code moi nhat)
+      .then(([resCT, resHS, resKT]) => {
+        setDsChiTiet(resCT.data);
+        setDsHoSo(resHS.data);
+        setDsKetThuc(resKT.data);
+      })
+      .catch(err => console.error("Lỗi khi tải dữ liệu:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -76,21 +74,18 @@ function DanhSachSVHienDangThucTap() {
     .filter(item => !!item.tinhTrangXacNhan)
     .filter(item => {
       const fullName = `${item.hoSinhVien || ""} ${item.tenSinhVien || ""}`.toLowerCase();
-      return (
-        fullName.includes(searchTerm.toLowerCase()) ||
-        item.mssv.includes(searchTerm)
-      );
+      return fullName.includes(searchTerm.toLowerCase()) || item.mssv.includes(searchTerm);
     })
     .filter(item => !filterDotThucTap || item.tenDotThucTap === filterDotThucTap)
     .filter(item => !filterDonVi || item.tenDonViThucTap === filterDonVi)
     .filter(item => {
       if (filterDK === "yes") return (dsFilesMap[item.mssv] || []).length > 0;
-      if (filterDK === "no")  return (dsFilesMap[item.mssv] || []).length === 0;
+      if (filterDK === "no") return (dsFilesMap[item.mssv] || []).length === 0;
       return true;
     })
     .filter(item => {
       if (filterKT === "yes") return (dsFilesKetThucMap[item.mssv] || []).length > 0;
-      if (filterKT === "no")  return (dsFilesKetThucMap[item.mssv] || []).length === 0;
+      if (filterKT === "no") return (dsFilesKetThucMap[item.mssv] || []).length === 0;
       return true;
     });
 
@@ -98,41 +93,23 @@ function DanhSachSVHienDangThucTap() {
 
   const downloadInitial = async mssv => {
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`http://118.69.126.49:5225/api/ChiTietThucTap/download-ho-so/${mssv}`, {
+      const response = await axios.get(`${apiHoSo}/download-ho-so/${mssv}`, {
         responseType: "blob",
       });
-      const blob = new Blob([response.data], { type: response.headers["content-type"] });
-      saveAs(blob, `HoSo_${mssv}.zip`);
+      saveAs(new Blob([response.data]), `${mssv}_HoSoBanDau.zip`);
     } catch (error) {
-      console.error("Lỗi khi tải hồ sơ:", error);
-      alert("Không thể tải hồ sơ. Vui lòng thử lại sau.");
-=======
-      const res = await axios.get(`${apiHoSo}/download-ho-so/${mssv}`, { responseType: "blob" });
-      saveAs(new Blob([res.data]), `${mssv}_HoSoBanDau.zip`);
-    } catch {
       alert(`Tải HS của ${mssv} thất bại`);
->>>>>>> ea1f53b (code moi nhat)
     }
   };
 
   const downloadKetThuc = async mssv => {
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`http://118.69.126.49:5225/api/ChiTietThucTap/download-ho-so/all`, {
+      const response = await axios.get(`${apiKetThuc}/download-ho-so/${mssv}`, {
         responseType: "blob",
       });
-      const blob = new Blob([response.data], { type: response.headers["content-type"] });
-      saveAs(blob, "TatCa_HoSoSinhVien.zip");
+      saveAs(new Blob([response.data]), `${mssv}_HoSoKetThuc.zip`);
     } catch (error) {
-      console.error("Lỗi khi tải tất cả hồ sơ:", error);
-      alert("Không thể tải tất cả hồ sơ. Vui lòng thử lại sau.");
-=======
-      const res = await axios.get(`${apiKetThuc}/download-ho-so/${mssv}`, { responseType: "blob" });
-      saveAs(new Blob([res.data]), `${mssv}_HoSoKetThuc.zip`);
-    } catch {
       alert(`Tải HS kết thúc của ${mssv} thất bại`);
->>>>>>> ea1f53b (code moi nhat)
     }
   };
 
@@ -167,16 +144,29 @@ function DanhSachSVHienDangThucTap() {
     const payload = {
       mssv: item.mssv,
       maDotThucTap: item.maDotThucTap,
-      ...["xacNhanCBQLDaNopSoNhatKyThucTap", "xacNhanCBQLDaNopGiayTiepNhanSVThucTap",
-        "xacNhanCBQLDaNopPhieuNhanXetCuaDVTT", "xacNhanCBQLDaNopPhieuNhanXetCuaNhanSuHDThucTap",
-        "xacNhanCBQLDaNopDonCamKetTuTimDVTT", "xacNhanCBQLDaNopCuonBaoCao",
-        "xacNhanCBQLDaNopHopDongLaoDong"].reduce((acc, key) => {
+      ...[
+        "xacNhanCBQLDaNopSoNhatKyThucTap",
+        "xacNhanCBQLDaNopGiayTiepNhanSVThucTap",
+        "xacNhanCBQLDaNopPhieuNhanXetCuaDVTT",
+        "xacNhanCBQLDaNopPhieuNhanXetCuaNhanSuHDThucTap",
+        "xacNhanCBQLDaNopDonCamKetTuTimDVTT",
+        "xacNhanCBQLDaNopCuonBaoCao",
+        "xacNhanCBQLDaNopHopDongLaoDong"
+      ].reduce((acc, key) => {
         acc[key] = key === field ? newValue : item[key];
         return acc;
       }, {})
     };
     axios.put(`${apiKetThuc}/cap-nhat-tinh-trang-ho-so-ket-thuc-byCBQL`, payload)
-      .then(() => setDsKetThuc(prev => prev.map(k => (k.mssv === item.mssv && k.maDotThucTap === item.maDotThucTap ? { ...k, [field]: newValue } : k))))
+      .then(() => {
+        setDsKetThuc(prev =>
+          prev.map(k =>
+            k.mssv === item.mssv && k.maDotThucTap === item.maDotThucTap
+              ? { ...k, [field]: newValue }
+              : k
+          )
+        );
+      })
       .catch(() => alert("Cập nhật thất bại"));
   };
 
@@ -257,10 +247,15 @@ function DanhSachSVHienDangThucTap() {
                     {filesKT.length ? <button onClick={() => downloadKetThuc(item.mssv)}><FiDownload /></button> : ""}
                     {filesKT.length ? <span onClick={() => handleExpand(item.mssv + "_kt")}>Đã nộp ({filesKT.length})</span> : "Chưa nộp"}
                   </td>
-                  {["xacNhanCBQLDaNopSoNhatKyThucTap","xacNhanCBQLDaNopGiayTiepNhanSVThucTap",
-                    "xacNhanCBQLDaNopPhieuNhanXetCuaDVTT","xacNhanCBQLDaNopPhieuNhanXetCuaNhanSuHDThucTap",
-                    "xacNhanCBQLDaNopDonCamKetTuTimDVTT","xacNhanCBQLDaNopCuonBaoCao",
-                    "xacNhanCBQLDaNopHopDongLaoDong"].map(field => (
+                  {[
+                    "xacNhanCBQLDaNopSoNhatKyThucTap",
+                    "xacNhanCBQLDaNopGiayTiepNhanSVThucTap",
+                    "xacNhanCBQLDaNopPhieuNhanXetCuaDVTT",
+                    "xacNhanCBQLDaNopPhieuNhanXetCuaNhanSuHDThucTap",
+                    "xacNhanCBQLDaNopDonCamKetTuTimDVTT",
+                    "xacNhanCBQLDaNopCuonBaoCao",
+                    "xacNhanCBQLDaNopHopDongLaoDong"
+                  ].map(field => (
                     <td key={field}>
                       <input
                         type="checkbox"
@@ -271,10 +266,22 @@ function DanhSachSVHienDangThucTap() {
                   ))}
                 </tr>
                 {expandedMssv === item.mssv && filesDK.length > 0 && (
-                  <tr><td colSpan="13"><ul className="file-list-inline">{filesDK.map(f => <li key={f.id} onClick={() => handlePreviewInline(f.id)}>{f.name}</li>)}</ul></td></tr>
+                  <tr>
+                    <td colSpan="13">
+                      <ul className="file-list-inline">
+                        {filesDK.map(f => <li key={f.id} onClick={() => handlePreviewInline(f.id)}>{f.name}</li>)}
+                      </ul>
+                    </td>
+                  </tr>
                 )}
                 {expandedMssv === item.mssv + "_kt" && filesKT.length > 0 && (
-                  <tr><td colSpan="13"><ul className="file-list-inline">{filesKT.map(f => <li key={f.id} onClick={() => handlePreviewInline(f.id, true)}>{f.name}</li>)}</ul></td></tr>
+                  <tr>
+                    <td colSpan="13">
+                      <ul className="file-list-inline">
+                        {filesKT.map(f => <li key={f.id} onClick={() => handlePreviewInline(f.id, true)}>{f.name}</li>)}
+                      </ul>
+                    </td>
+                  </tr>
                 )}
               </React.Fragment>
             );
@@ -283,7 +290,7 @@ function DanhSachSVHienDangThucTap() {
       </table>
 
       {previewLink && (
-        <div className="modal-overlay" onClick={() => setPreviewLink("")}>  
+        <div className="modal-overlay" onClick={() => setPreviewLink("")}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setPreviewLink("")}>×</button>
             <iframe src={previewLink} title="Preview" style={{ width: "100%", height: "90vh", border: "none" }} />

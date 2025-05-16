@@ -3,7 +3,6 @@ import axios from 'axios';
 import './DangKyTotNghiep.css';
 
 const DangKyTotNghiep = () => {
-  // Lấy MSSV và Họ tên từ localStorage sau khi đăng nhập
   const storedMssv = localStorage.getItem('username') || '';
   const storedHoTen = localStorage.getItem('tenHienThi') || '';
 
@@ -28,23 +27,14 @@ const DangKyTotNghiep = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('accessToken');
-<<<<<<< HEAD
-        const mssv = localStorage.getItem('username');
-        const [dotsRes, regsRes] = await Promise.all([
-=======
-        // Fetch đợt, đăng ký, và danh sách giảng viên
         const [dotsRes, regsRes, teachersRes] = await Promise.all([
->>>>>>> ea1f53b (code moi nhat)
           axios.get('http://118.69.126.49:5225/api/DotDangKyTotNghiep/get-all', {
             headers: { Authorization: `Bearer ${token}` }
           }),
           axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all', {
-<<<<<<< HEAD
-=======
             headers: { Authorization: `Bearer ${token}` }
           }),
           axios.get('http://118.69.126.49:5225/api/GiangVien', {
->>>>>>> ea1f53b (code moi nhat)
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -53,6 +43,7 @@ const DangKyTotNghiep = () => {
         const userRegs = regsRes.data
           .filter(r => r.mssv === storedMssv)
           .map(r => r.maDotDKTN);
+
         setDots(validDots);
         setRegs(userRegs);
         setTeachers(teachersRes.data || []);
@@ -71,14 +62,17 @@ const DangKyTotNghiep = () => {
       setShowModal(true);
       return;
     }
+
     const now = new Date();
     const start = new Date(dot.tuNgay);
     const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000);
+
     if (now > expire) {
       setMessage({ type: 'error', text: 'Đã hết hạn đăng ký cho đợt này.' });
       setShowModal(true);
       return;
     }
+
     setSelectedDot(dot);
     setFormData(f => ({
       ...f,
@@ -100,7 +94,9 @@ const DangKyTotNghiep = () => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: '', text: '' });
+
     try {
+      const token = localStorage.getItem('accessToken');
       const payload = {
         mssv: formData.mssv,
         maDotDKTN: selectedDot.maDotDKTN,
@@ -110,12 +106,13 @@ const DangKyTotNghiep = () => {
         noiDungNghienCuu: formData.noiDungNghienCuu,
         hinhThucTotNghiep: formData.hinhThucTotNghiep
       };
-      const token = localStorage.getItem('accessToken');
+
       await axios.post(
         'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/insert-by-sinhvien',
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setMessage({ type: 'success', text: 'Đăng ký thành công!' });
       setRegs(prev => [...prev, selectedDot.maDotDKTN]);
       setSelectedDot(null);
@@ -134,6 +131,7 @@ const DangKyTotNghiep = () => {
     const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000);
     return { ...dot, isExpired: now > expire };
   });
+
   const nonExpiredDots = dotsWithExpire.filter(dot => !dot.isExpired);
   const expiredDots = dotsWithExpire.filter(dot => dot.isExpired);
 
@@ -156,10 +154,7 @@ const DangKyTotNghiep = () => {
                 onClick={() => !disabled && handleSelectDot(dot)}
               >
                 <h3>{dot.tenDotDKTN}</h3>
-                <p>
-                  {new Date(dot.tuNgay).toLocaleDateString()} –{' '}
-                  {new Date(dot.denNgay).toLocaleDateString()}
-                </p>
+                <p>{new Date(dot.tuNgay).toLocaleDateString()} – {new Date(dot.denNgay).toLocaleDateString()}</p>
                 {dot.ghiChu && <span className="dktn-note">{dot.ghiChu}</span>}
                 {isReg && <div className="dktn-badge registered">Đã đăng ký</div>}
               </div>
@@ -184,7 +179,14 @@ const DangKyTotNghiep = () => {
             <div className="dktn-field"><label>Tên đề tài tốt nghiệp</label><input type="text" name="tenDeTaiTotNghiep" value={formData.tenDeTaiTotNghiep} onChange={handleChange} required /></div>
             <div className="dktn-field"><label>Mục tiêu</label><textarea name="mucTieu" rows={3} value={formData.mucTieu} onChange={handleChange} required /></div>
             <div className="dktn-field"><label>Nội dung nghiên cứu</label><textarea name="noiDungNghienCuu" rows={4} value={formData.noiDungNghienCuu} onChange={handleChange} required /></div>
-            <div className="dktn-field"><label>Hình thức tốt nghiệp</label><select name="hinhThucTotNghiep" value={formData.hinhThucTotNghiep} onChange={handleChange} required><option value="">-- Chọn hình thức --</option><option value="Chính Khóa">Chính Khóa</option><option value="Liên Thông">Liên Thông</option></select></div>
+            <div className="dktn-field">
+              <label>Hình thức tốt nghiệp</label>
+              <select name="hinhThucTotNghiep" value={formData.hinhThucTotNghiep} onChange={handleChange} required>
+                <option value="">-- Chọn hình thức --</option>
+                <option value="Chính Khóa">Chính Khóa</option>
+                <option value="Liên Thông">Liên Thông</option>
+              </select>
+            </div>
             <button type="submit" disabled={loading}>{loading ? 'Đang gửi...' : 'Gửi đăng ký'}</button>
           </form>
         )}
@@ -207,7 +209,12 @@ const DangKyTotNghiep = () => {
       )}
 
       {showModal && (
-        <div className="dktn-modal-overlay"><div className="dktn-modal"><p className={message.type}>{message.text}</p><button className="dktn-modal-close" onClick={closeModal}>Đóng</button></div></div>
+        <div className="dktn-modal-overlay">
+          <div className="dktn-modal">
+            <p className={message.type}>{message.text}</p>
+            <button className="dktn-modal-close" onClick={closeModal}>Đóng</button>
+          </div>
+        </div>
       )}
     </div>
   );

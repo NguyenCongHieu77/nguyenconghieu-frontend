@@ -26,16 +26,12 @@ const DoiMatKhau = () => {
         try {
             const response = await axios.post(
                 "http://118.69.126.49:5225/api/Account/ChangePassword",
-
-                requestData,
-
                 {
                     tenTaiKhoan: mssv,
                     oldPassword,
                     newPassword,
                     confirmPassword,
                 },
-
                 {
                     headers: { "Content-Type": "application/json" },
                 }
@@ -47,7 +43,7 @@ const DoiMatKhau = () => {
             setNewPassword("");
             setConfirmPassword("");
 
-            // setTimeout(() => navigate("/http://localhost:3000"), 2000);
+            setTimeout(() => navigate("/thongtintaikhoan"), 2000);
         } catch (error) {
             setError(error.response?.data?.message || "Đổi mật khẩu thất bại!");
             setSuccess("");

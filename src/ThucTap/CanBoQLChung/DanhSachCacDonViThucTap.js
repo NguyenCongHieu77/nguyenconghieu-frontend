@@ -19,7 +19,6 @@ const DanhSachCacDonViThucTap = () => {
     loaiDonViThucTap: 0,
   });
 
-  // Lấy danh sách đơn vị khi component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,42 +31,30 @@ const DanhSachCacDonViThucTap = () => {
     fetchData();
   }, []);
 
-  // Tìm kiếm
   const handleSearch = e => setSearchTerm(e.target.value);
 
-  // Chỉnh sửa ô
   const startEditing = (id, key, value) => {
     setEditingCell({ id, key });
     setTempValue(value);
   };
+
   const cancelEditing = () => {
     setEditingCell({ id: null, key: null });
     setTempValue("");
   };
+
   const saveEditing = async () => {
     const { id, key } = editingCell;
     if (id == null || key == null) return cancelEditing();
+
     const originalItem = donVis.find(item => item.maDonViThucTap === id);
     if (!originalItem) return cancelEditing();
 
-    let parsedValue = tempValue;
-    if (key === "loaiDonViThucTap") parsedValue = parseInt(tempValue, 10);
+    let parsedValue = key === "loaiDonViThucTap" ? parseInt(tempValue, 10) : tempValue;
     const updatedItem = { ...originalItem, [key]: parsedValue };
 
     try {
-      await axios.put(
-        `http://118.69.126.49:5225/api/DonViThucTap/update/${id}`,
-<<<<<<< HEAD
-        updatedData
-      );
-      setDonVis((prev) =>
-        prev.map((item) =>
-          item.maDonViThucTap === id ? { ...item, ...updatedData } : item
-        )
-=======
-        updatedItem
->>>>>>> ea1f53b (code moi nhat)
-      );
+      await axios.put(`http://118.69.126.49:5225/api/DonViThucTap/update/${id}`, updatedItem);
       setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
@@ -78,14 +65,9 @@ const DanhSachCacDonViThucTap = () => {
 
   const renderCell = (item, key) => {
     const rawValue = item[key];
-    const displayValue = rawValue !== null && typeof rawValue === "object"
-      ? JSON.stringify(rawValue)
-      : rawValue ?? "";
+    const displayValue = rawValue !== null && typeof rawValue === "object" ? JSON.stringify(rawValue) : rawValue ?? "";
 
-    if (
-      editingCell.id === item.maDonViThucTap &&
-      editingCell.key === key
-    ) {
+    if (editingCell.id === item.maDonViThucTap && editingCell.key === key) {
       return (
         <input
           type="text"
@@ -110,31 +92,22 @@ const DanhSachCacDonViThucTap = () => {
     );
   };
 
-  // Cập nhật loại đơn vị
   const handleLoaiChange = async (id, newValue) => {
     const originalItem = donVis.find(item => item.maDonViThucTap === id);
     if (!originalItem) return;
     const updatedItem = { ...originalItem, loaiDonViThucTap: newValue };
+
     try {
-<<<<<<< HEAD
-      const res = await axios.post(
-        "http://118.69.126.49:5225/api/DonViThucTap/create",
-        newDonVi
-=======
-      await axios.put(
-        `http://118.69.126.49:5225/api/DonViThucTap/update/${id}`,
-        updatedItem
->>>>>>> ea1f53b (code moi nhat)
-      );
+      await axios.put(`http://118.69.126.49:5225/api/DonViThucTap/update/${id}`, updatedItem);
       setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
     } catch (error) {
       console.error("Lỗi khi cập nhật loại:", error);
     }
   };
 
-  // Xóa đơn vị
-  const handleDelete = async (id) => {
+  const handleDelete = async id => {
     if (!window.confirm('Bạn có chắc muốn xóa đơn vị này?')) return;
+
     try {
       await axios.delete(`http://118.69.126.49:5225/api/DonViThucTap/delete/${id}`);
       setDonVis(prev => prev.filter(item => item.maDonViThucTap !== id));
@@ -143,12 +116,30 @@ const DanhSachCacDonViThucTap = () => {
     }
   };
 
-  // Lọc dữ liệu
   const filteredData = donVis.filter(item =>
     Object.values(item).some(val =>
       String(val ?? "").toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
+  const handleAddDonVi = async () => {
+    try {
+      const res = await axios.post("http://118.69.126.49:5225/api/DonViThucTap/insert", newDonVi);
+      setDonVis(prev => [...prev, res.data]);
+      setShowAddForm(false);
+      setNewDonVi({
+        tenDonViThucTap: "",
+        dienThoai: "",
+        diaChi: "",
+        nguoiHuongDan: "",
+        email: "",
+        moTa: "",
+        loaiDonViThucTap: 0
+      });
+    } catch (error) {
+      console.error("Lỗi khi thêm đơn vị:", error);
+    }
+  };
 
   return (
     <div className="donvi-container">
@@ -171,12 +162,18 @@ const DanhSachCacDonViThucTap = () => {
         <div className="add-formDV">
           <table>
             <tbody>
-              <tr><td>Tên:</td><td><input name="tenDonViThucTap" value={newDonVi.tenDonViThucTap} onChange={e => setNewDonVi(prev => ({ ...prev, tenDonViThucTap: e.target.value }))} /></td></tr>
-              <tr><td>Điện thoại:</td><td><input name="dienThoai" value={newDonVi.dienThoai} onChange={e => setNewDonVi(prev => ({ ...prev, dienThoai: e.target.value }))} /></td></tr>
-              <tr><td>Địa chỉ:</td><td><input name="diaChi" value={newDonVi.diaChi} onChange={e => setNewDonVi(prev => ({ ...prev, diaChi: e.target.value }))} /></td></tr>
-              <tr><td>Người hướng dẫn:</td><td><input name="nguoiHuongDan" value={newDonVi.nguoiHuongDan} onChange={e => setNewDonVi(prev => ({ ...prev, nguoiHuongDan: e.target.value }))} /></td></tr>
-              <tr><td>Email:</td><td><input name="email" value={newDonVi.email} onChange={e => setNewDonVi(prev => ({ ...prev, email: e.target.value }))} /></td></tr>
-              <tr><td>Mô tả:</td><td><input name="moTa" value={newDonVi.moTa} onChange={e => setNewDonVi(prev => ({ ...prev, moTa: e.target.value }))} /></td></tr>
+              {["tenDonViThucTap", "dienThoai", "diaChi", "nguoiHuongDan", "email", "moTa"].map(field => (
+                <tr key={field}>
+                  <td>{field}:</td>
+                  <td>
+                    <input
+                      name={field}
+                      value={newDonVi[field]}
+                      onChange={e => setNewDonVi(prev => ({ ...prev, [field]: e.target.value }))}
+                    />
+                  </td>
+                </tr>
+              ))}
               <tr>
                 <td>Loại:</td>
                 <td>
@@ -193,16 +190,7 @@ const DanhSachCacDonViThucTap = () => {
               </tr>
               <tr>
                 <td colSpan={2} style={{ textAlign: 'center' }}>
-                  <button onClick={async () => {
-                    try {
-                      const res = await axios.post("http://118.69.126.49:5225/api/DonViThucTap/insert", newDonVi);
-                      setDonVis(prev => [...prev, res.data]);
-                      setShowAddForm(false);
-                      setNewDonVi({ tenDonViThucTap: "", dienThoai: "", diaChi: "", nguoiHuongDan: "", email: "", moTa: "", loaiDonViThucTap: 0 });
-                    } catch (error) {
-                      console.error("Lỗi khi thêm đơn vị:", error);
-                    }
-                  }}>Lưu đơn vị</button>
+                  <button onClick={handleAddDonVi}>Lưu đơn vị</button>
                 </td>
               </tr>
             </tbody>

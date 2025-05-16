@@ -83,3 +83,57 @@
     border: 1px solid #ddd;
     text-align: left;
   }
+  .controls {
+  /* Căn chỉnh và khoảng cách ngoài */
+  display: flex;
+  justify-content: flex-start; /* hoặc center, flex-end tuỳ ý */
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.controls input {
+  /* Kích thước và font */
+  width: 70%;
+  max-width: 300px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+
+  /* Viền và bo góc */
+  border: 1px solid #ccc;
+  border-radius: 0.25rem;
+
+  /* Màu placeholder */
+  color: #333;
+}
+
+.controls input::placeholder {
+  color: #999;
+  opacity: 1; /* đảm bảo hiển thị trên mọi trình duyệt */
+}
+
+.controls input:focus {
+  outline: none;
+  border-color: #0066cc;
+  /* Tạo hiệu ứng glow nhẹ */
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+  transition: border-color 0.2s ease-in-out,
+              box-shadow 0.2s ease-in-out;
+}
+
+/* Nếu muốn thêm biểu tượng tìm kiếm ở đầu input */
+.controls {
+  position: relative;
+}
+.controls input {
+  padding-left: 2.5rem;
+}
+.controls::before {
+  content: "\f002"; /* unicode icon FontAwesome */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 0.8rem;
+  color: #888;
+  pointer-events: none;
+}
