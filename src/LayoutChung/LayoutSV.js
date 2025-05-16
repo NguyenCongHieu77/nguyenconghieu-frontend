@@ -1,39 +1,84 @@
-// LayoutSV.js
+// LayoutSV.jsx
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FiSettings, FiLogOut, FiLock, FiBell, FiFileText } from 'react-icons/fi';
+import {
+  FiSettings,
+  FiLogOut,
+  FiLock,
+  FiBell,
+  FiFileText,
+  FiMenu
+} from 'react-icons/fi';
 import './Layout.css';
 
 function LayoutSV() {
   const [showSetting, setShowSetting] = useState(false);
-  const [showNotif, setShowNotif] = useState(false);
-  const [tenHienThi, setTenHienThi] = useState('');
-  const [notifCount, setNotifCount] = useState(0);
-  const [notifs, setNotifs] = useState([]);
+  const [showNotif, setShowNotif]     = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [tenHienThi, setTenHienThi]   = useState('');
+  const [notifCount, setNotifCount]   = useState(0);
+  const [notifs, setNotifs]           = useState([]);
   const navigate = useNavigate();
 
-  // Toggle dropdowns
-  const toggleSetting = () => setShowSetting(s => !s);
-  const toggleNotif = () => setShowNotif(s => !s);
+  const toggleSetting    = () => setShowSetting(s => !s);
+  const toggleNotif      = () => setShowNotif(s => !s);
+  const toggleMobileMenu = () => setMobileMenuOpen(s => !s);
 
+  const closeMenus = () => {
+    setShowSetting(false);
+    setShowNotif(false);
+    setMobileMenuOpen(false);
+  };
+
+  // Fetch display name + notifications
   useEffect(() => {
-    // load display name
     const name = localStorage.getItem('tenHienThi') || '';
     setTenHienThi(name);
 
-    // load notifications
     const mssv = localStorage.getItem('username');
     if (mssv) {
       axios
         .get(`http://118.69.126.49:5225/api/ThongBao/thongbao/${mssv}`)
         .then(res => {
-          setNotifs(res.data);
-          setNotifCount(res.data.length);
+          const data = res.data;
+          setNotifs(data);
+          // count only the unread ones
+          const unreadCount = data.filter(n => !n.daDoc).length;
+          setNotifCount(unreadCount);
         })
         .catch(err => console.error('Lỗi khi tải thông báo:', err));
     }
   }, []);
+
+  // Handle clicking a notification
+  const handleNotifClick = async notif => {
+    const mssv = localStorage.getItem('username');
+    if (!notif.daDoc) {
+      try {
+        // mark as read on server
+        await axios.put(
+          `http://118.69.126.49:5225/api/ThongBao/thongbaoread/${mssv}/${notif.maThongBao}`
+        );
+        // update local state
+        setNotifs(prev =>
+          prev.map(n =>
+            n.maThongBao === notif.maThongBao ? { ...n, daDoc: true } : n
+          )
+        );
+        setNotifCount(c => Math.max(0, c - 1));
+      } catch (error) {
+        console.error('Lỗi khi đánh dấu đã đọc:', error);
+      }
+    }
+
+    // if this notification is a “nộp hồ sơ” request, navigate to the form page
+    if (notif.noiDung.toLowerCase().includes('nộp hồ sơ')) {
+      navigate('/layout-sv/thong-tin-thuc-tap');
+    }
+
+    closeMenus();
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -45,12 +90,32 @@ function LayoutSV() {
       <nav className="nav-bar">
         <span className="logo-text">THỰC TẬP</span>
 
-        <NavLink to="dang-ky-thuc-tap" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-          Đăng Ký Thực Tập
-        </NavLink>
-        <NavLink to="thong-tin-thuc-tap" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-          Thông Tin Thực Tập
-        </NavLink>
+        {/* Hamburger menu for mobile */}
+        <button className="hamburger" onClick={toggleMobileMenu}>
+          <FiMenu size={24} />
+        </button>
+
+        {/* Mobile nav links */}
+        <div className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
+          <NavLink
+            to="dang-ky-thuc-tap"
+            className={({ isActive }) =>
+              isActive ? 'nav-link active' : 'nav-link'
+            }
+            onClick={closeMenus}
+          >
+            Đăng Ký Thực Tập
+          </NavLink>
+          <NavLink
+            to="thong-tin-thuc-tap"
+            className={({ isActive }) =>
+              isActive ? 'nav-link active' : 'nav-link'
+            }
+            onClick={closeMenus}
+          >
+            Thông Tin Thực Tập
+          </NavLink>
+        </div>
 
         {/* Notification bell */}
         <div className="notif-container">
@@ -60,14 +125,19 @@ function LayoutSV() {
           </button>
           {showNotif && (
             <div className="notif-dropdown">
-              {notifs.length === 0
-                ? <div className="notif-item">Không có thông báo</div>
-                : notifs.map((n, i) => (
-                  <div key={i} className="notif-item">
+              {notifs.length === 0 ? (
+                <div className="notif-item">Không có thông báo</div>
+              ) : (
+                notifs.map(n => (
+                  <div
+                    key={n.maThongBao}
+                    className={`notif-item ${!n.daDoc ? 'unread' : ''}`}
+                    onClick={() => handleNotifClick(n)}
+                  >
                     {n.noiDung}
                   </div>
                 ))
-              }
+              )}
             </div>
           )}
         </div>
@@ -82,13 +152,21 @@ function LayoutSV() {
               <div className="dropdown-item profile">
                 👤 {tenHienThi || 'Chưa đăng nhập'}
               </div>
-              <NavLink to="/layout-sv-tn/dang-ky-tot-nghiep" className="dropdown-item">
+              <NavLink
+                to="/layout-sv-tn/dang-ky-tot-nghiep"
+                className="dropdown-item"
+                onClick={closeMenus}
+              >
                 <FiFileText size={16} /> Đăng Ký TN
               </NavLink>
               <button onClick={handleLogout} className="dropdown-item">
                 <FiLogOut size={16} /> Đăng xuất
               </button>
-              <NavLink to="doi-mat-khau" className="dropdown-item">
+              <NavLink
+                to="doi-mat-khau"
+                className="dropdown-item"
+                onClick={closeMenus}
+              >
                 <FiLock size={16} /> Đổi mật khẩu
               </NavLink>
             </div>

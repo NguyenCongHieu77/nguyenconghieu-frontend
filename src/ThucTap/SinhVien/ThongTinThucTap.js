@@ -65,6 +65,14 @@ function ThongTinThucTap() {
     if (mssv) fetchAll();
   }, [mssv]);
 
+  // Hàm màu cho trạng thái xác nhận
+  const getStatusColor = (status) => {
+    if (status === "Đang Xác Nhận...") return "orange";
+    if (status === "Đã xác nhận") return "green";
+    if (status === "Bị từ chối") return "red";
+    return "black";
+  };
+
   const handleCardClick = dot => {
     setSelectedDot(dot);
 
@@ -184,6 +192,12 @@ function ThongTinThucTap() {
             <p><strong>Đợt:</strong> {item.tenDotThucTap}</p>
             <p><strong>Đơn vị:</strong> {item.tenDonViThucTap}</p>
             <p><strong>GV hướng dẫn:</strong> {item.hoTenGiaoVien}</p>
+            <p>
+              <strong>Trạng thái:</strong>{" "}
+              <span style={{ color: getStatusColor(item.tinhTrangXacNhan) }}>
+                {item.tinhTrangXacNhan}
+              </span>
+            </p>
             <p><strong>Tổng giờ:</strong> {item.tongSoGio} giờ</p>
           </div>
         ))}
@@ -352,7 +366,7 @@ function ThongTinThucTap() {
                 </>
               )}
               {selectedDot.tongSoGio < 700 && (
-                <p className="warning">Phải đủ 700 giờ mới được nộp</p>
+                <p className="warning">Phải nộp đầy đủ hồ sơ đăng ký và đủ 700 giờ mới được nộp</p>
               )}
             </div>
           </div>

@@ -6,6 +6,7 @@
   gap: 20px;
   align-items: center;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .logo-text {
@@ -189,3 +190,18 @@
 .notif-item:hover {
   background-color: #f5f5f5;
 }
+
+/* bold unread notifications */
+.notif-item.unread {
+  font-weight: 600;
+}
+/* the red dot on the bell */
+/* .notif-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background: red;
+  border-radius: 50%;
+} */

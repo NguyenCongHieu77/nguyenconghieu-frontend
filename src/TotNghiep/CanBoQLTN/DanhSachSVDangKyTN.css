@@ -1,0 +1,89 @@
+.dn-tn-container {
+  padding: 16px;
+}
+
+.dn-tn-container h2 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+}
+
+.dn-tn-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dn-tn-table th,
+.dn-tn-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.dn-tn-table th {
+  background-color: #f5f5f5;
+}
+
+.files-cell {
+  padding: 4px;
+}
+
+.file-toggle {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.no-files {
+  color: #999;
+}
+
+.files-expanded {
+  background-color: #fafafa;
+}
+
+.file-list-inline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-list-inline li {
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  width: 90%; max-width: 800px; max-height: 90vh;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.modal-content iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  border: none; background: none;
+  font-size: 1.5rem; cursor: pointer;
+}

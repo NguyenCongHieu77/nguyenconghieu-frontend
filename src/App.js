@@ -2,12 +2,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import DangNhap from "./DangNhap/DangNhap";
 import DoiMatKhau from "./DangNhap/DoiMatKhau";
+import QuenMatKhau from "./DangNhap/QuenMatKhau";
+
 
 import LayoutSV from "./LayoutChung/LayoutSV";
 import LayoutCBQLCLB from "./LayoutChung/LayoutCBQLCLB";
 import LayoutCBQLChung from "./LayoutChung/LayoutCBQLChung";
 
 import LayoutSVTN from "./TotNghiep/LayoutTNChung/LayoutSVTN";
+import LayoutQLTN from "./TotNghiep/LayoutTNChung/LayoutQLTN";
 
 
 
@@ -27,13 +30,21 @@ import DanhSachCacDotThucTap from "./ThucTap/CanBoQLChung/DanhSachCacDotThucTap"
 import DangKyTotNghiep from "./TotNghiep/SinhVienTN/DangKyTotNghiep";
 import ThongTinTotNghiep from "./TotNghiep/SinhVienTN/ThongTinTotNghiep";
 
+import DanhSachSVDangKyTN from "./TotNghiep/CanBoQLTN/DanhSachSVDangKyTN";
+import DanhSachSVDuocXacNhan from "./TotNghiep/CanBoQLTN/DanhSachSVDuocXacNhan";
+import CacDotTotNghiep from "./TotNghiep/CanBoQLTN/CacDotTotNghiep";
+
 
 function App() {
   return (
+
+    
+
     <BrowserRouter>
       <Routes>
         {/* Trang đăng nhập */}
         <Route path="/" element={<DangNhap />} />
+        <Route path="/quen-mat-khau" element={<QuenMatKhau />} />
 
         {/* Layout Sinh Viên */}
         <Route path="/layout-sv" element={<LayoutSV />}>
@@ -62,6 +73,14 @@ function App() {
         <Route path="/layout-sv-tn" element={<LayoutSVTN />}>
           <Route path="dang-ky-tot-nghiep" element={<DangKyTotNghiep />} />
           <Route path="thong-tin-tot-nghiep" element={<ThongTinTotNghiep />} />
+          <Route path="doi-mat-khau" element={<DoiMatKhau />} />
+        </Route>
+
+        {/* Layout Quản Lý Tốt Nghiệp */}
+        <Route path="/layout-ql-tn" element={<LayoutQLTN />}>
+          <Route path="danh-sach-sv-dk-tn" element={<DanhSachSVDangKyTN />} />
+          <Route path="danh-sach-sv-duoc-xn" element={<DanhSachSVDuocXacNhan />} />
+          <Route path="cac-dot-tot-nghiep" element={<CacDotTotNghiep />} />
           <Route path="doi-mat-khau" element={<DoiMatKhau />} />
         </Route>
 

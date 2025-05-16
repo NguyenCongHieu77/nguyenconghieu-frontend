@@ -35,11 +35,11 @@ const DangNhap = () => {
       localStorage.setItem("user", JSON.stringify(data)); // tuỳ chọn
 
       setTimeout(() => {
-        if (data.maNhomTaiKhoan === 1) {
-          navigate("/layout-cbql-clb/danh-sach-sv-dang-ky");
+        if (data.maNhomTaiKhoan === 5) {
+          navigate("/layout-cbql-clb/danh-sach-sv-dang-thuc-tap");
         } else if (data.maNhomTaiKhoan === 3) {
           navigate("/layout-sv/dang-ky-thuc-tap");
-        } else if (data.maNhomTaiKhoan === 2) {
+        } else if (data.maNhomTaiKhoan === 1) {
           navigate("/layout-cbql-chung/danh-sach-sv-duoc-xac-nhan-tu-clb");
         } else {
           setLoading(false);
@@ -57,8 +57,8 @@ const DangNhap = () => {
       <div className="logo-side">
         <img src="/image/logo.png" alt="Logo" className="logo" />
         <h2>ĐĂNG NHẬP</h2>
-        <a href="/nhaptentaikhoandelaylaimatkhau" className="forgot-password">
-          quên mật khẩu
+        <a href="/quen-mat-khau" className="forgot-password">
+          QUÊN MẬT KHẨU
         </a>
       </div>
       <form className="form-side" onSubmit={handleSubmit}>

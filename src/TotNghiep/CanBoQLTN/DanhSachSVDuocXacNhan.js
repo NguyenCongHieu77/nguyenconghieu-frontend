@@ -1,8 +1,9 @@
+// File: DanhSachSVDuocXacNhan.js
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
-import './DanhSachSVDangKyTN.css';
+import './DanhSachSVDuocXacNhan.css';
 
-function DanhSachSVDangKyTN() {
+function DanhSachSVDuocXacNhan() {
   const [students, setStudents] = useState([]);
   const [filesMap, setFilesMap] = useState({});
   const [expandedMssv, setExpandedMssv] = useState(null);
@@ -16,15 +17,18 @@ function DanhSachSVDangKyTN() {
   useEffect(() => {
     axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all')
       .then(res => {
-        const normalized = res.data.map(sv => ({
-          ...sv,
-          daNopThuyetMinh: sv.daNopThuyetMinh === 'True',
-          duDieuKienBaoCao: sv.duDieuKienBaoCao === 'True',
-          ketQuaTotNghiep: sv.ketQuaTotNghiep === 'True',
-          dacCachTotNghiep: sv.dacCachTotNghiep === 'True',
-          diemTotNghiep: parseFloat(sv.diemTotNghiep) || 0,
-          maTrangThai: parseInt(sv.maTrangThai, 10) || 0
-        })).filter(sv => sv.maTrangThai !== 1); // Hide confirmed students
+        const normalized = res.data
+          .map(sv => ({
+            ...sv,
+            daNopThuyetMinh: sv.daNopThuyetMinh === 'True',
+            duDieuKienBaoCao: sv.duDieuKienBaoCao === 'True',
+            ketQuaTotNghiep: sv.ketQuaTotNghiep === 'True',
+            dacCachTotNghiep: sv.dacCachTotNghiep === 'True',
+            diemTotNghiep: parseFloat(sv.diemTotNghiep) || 0,
+            maTrangThai: parseInt(sv.maTrangThai, 10) || 0
+          }))
+          .filter(sv => sv.maTrangThai === 1);
+
         setStudents(normalized);
       })
       .catch(err => console.error('Lỗi tải danh sách sinh viên:', err))
@@ -116,46 +120,67 @@ function DanhSachSVDangKyTN() {
     }
   };
 
-  const bulkUpdateTrangThai = async (value) => {
-    for (const sv of filteredStudents) {
-      await handleTrangThaiChange(sv, value);
-    }
-  };
+  const handleDeleteStudent = async (mssv, maDotDKTN) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa sinh viên ${mssv}?`)) return;
 
-  const bulkDeleteRejected = async () => {
-    const rejected = filteredStudents.filter(sv => sv.maTrangThai === 2);
-    for (const sv of rejected) {
-      try {
-        await axios.delete(`http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/delete/${sv.mssv}/${sv.maDotDKTN}`);
-        setStudents(prev => prev.filter(s => s.mssv !== sv.mssv || s.maDotDKTN !== sv.maDotDKTN));
-      } catch (err) {
-        console.error('Lỗi khi xóa sinh viên:', err);
-      }
-    }
-  };
-
-  const handleTrangThaiChange = async (sv, trangThaiValue) => {
-    const newTrangThai = sv.maTrangThai === trangThaiValue ? 0 : trangThaiValue;
     try {
-      await axios.put('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/update-trangthai', {
-        mssv: sv.mssv,
-        maDotDKTN: sv.maDotDKTN,
-        maTrangThai: newTrangThai
-      });
-      setStudents(prev => prev.map(item =>
-        item.mssv === sv.mssv ? { ...item, maTrangThai: newTrangThai } : item
-      ));
+      await axios.delete(`http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/delete/${mssv}/${maDotDKTN}`);
+      setStudents(prev => prev.filter(sv => sv.mssv !== mssv || sv.maDotDKTN !== maDotDKTN));
     } catch (err) {
-      console.error('Lỗi cập nhật trạng thái:', err);
-      alert('Không thể cập nhật trạng thái.');
+      console.error('Lỗi xóa sinh viên:', err);
+      alert('Không thể xóa sinh viên.');
     }
   };
+
+  const handleFieldChange = async (sv, field, value) => {
+  const updated = { ...sv, [field]: value };
+
+  // Auto set ketQuaTotNghiep if điểm >= 5
+  if (field === 'diemTotNghiep') {
+    updated.ketQuaTotNghiep = parseFloat(value) >= 5;
+  }
+
+  const payload = {
+    mssv: updated.mssv,
+    maDotDKTN: updated.maDotDKTN,
+    maGiaoVien: updated.maGiaoVien || "NV0000000", // fallback nếu null
+
+    tenDeTaiTotNghiep: updated.tenDeTaiTotNghiep || null,
+    mucTieu: updated.mucTieu || null,
+    noiDungNghienCuu: updated.noiDungNghienCuu || null,
+
+    daNopThuyetMinh: updated.daNopThuyetMinh ?? null,
+    ngayNopThuyetMinh: updated.ngayNopThuyetMinh
+  ? new Date(updated.ngayNopThuyetMinh).toISOString()
+  : null,
+    linkThuyetMinh: updated.linkThuyetMinh || null,
+
+    ngayXetDuDieuKien: updated.ngayXetDuDieuKien ?? null,
+    quyetDinhDacCach: updated.quyetDinhDacCach || null,
+    hinhThucTotNghiep: updated.hinhThucTotNghiep || null,
+
+    ketQuaTotNghiep: updated.ketQuaTotNghiep ?? null,
+    diemTotNghiep: updated.diemTotNghiep ?? null,
+    dacCachTotNghiep: updated.dacCachTotNghiep ?? null,
+
+    maTrangThai: updated.maTrangThai ?? 1,
+  };
+
+  try {
+    await axios.put('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/svdktn-updatebyCBQL', payload);
+    setStudents(prev => prev.map(item => item.mssv === sv.mssv ? { ...item, ...updated } : item));
+  } catch (err) {
+    console.error('Lỗi cập nhật:', err);
+    alert('Không thể cập nhật thông tin.');
+  }
+};
+
 
   if (loading) return <p>Đang tải dữ liệu...</p>;
 
   return (
     <div className="sv-xac-nhan-container">
-      <h2>DANH SÁCH SINH VIÊN ĐĂNG KÝ TỐT NGHIỆP</h2>
+      <h2>DANH SÁCH SINH VIÊN ĐÃ ĐƯỢC XÁC NHẬN</h2>
 
       <div className="filters">
         <input placeholder="Tìm MSSV hoặc họ tên" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
@@ -172,9 +197,6 @@ function DanhSachSVDangKyTN() {
           <option value="nophoso">Đã nộp</option>
           <option value="chuanophoso">Chưa nộp</option>
         </select>
-        <button onClick={() => bulkUpdateTrangThai(1)}>Xác nhận tất cả</button>
-        <button onClick={() => bulkUpdateTrangThai(2)}>Từ chối tất cả</button>
-        <button onClick={bulkDeleteRejected}>Xóa tất cả bị từ chối</button>
         <button onClick={handleDownloadAllHoso}>Tải tất cả hồ sơ đã nộp</button>
       </div>
 
@@ -191,7 +213,10 @@ function DanhSachSVDangKyTN() {
             <th>Tải hồ sơ</th>
             <th>Hồ sơ đăng ký</th>
             <th>Đã nộp TM</th>
-            <th>Trạng thái</th>
+            <th>Điểm TN</th>
+            <th>Kết Quả TN</th>
+            <th>Đặc Cách TN</th>
+            <th>Xóa</th>
           </tr>
         </thead>
         <tbody>
@@ -207,19 +232,17 @@ function DanhSachSVDangKyTN() {
                   <td>{sv.tenDeTaiTotNghiep}</td>
                   <td>{sv.mucTieu}</td>
                   <td>{sv.noiDungNghienCuu}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button onClick={() => handleDownloadHoso(sv.mssv)}>Tải</button>
-                  </td>
+                  <td><button onClick={() => handleDownloadHoso(sv.mssv)}>Tải</button></td>
                   <td>{files.length > 0 ? <span onClick={() => handleExpand(sv.mssv)} style={{ cursor: 'pointer', color: '#007bff' }}>Đã nộp ({files.length})</span> : <span className="no-files">Chưa nộp</span>}</td>
                   <td><input type="checkbox" checked={sv.daNopThuyetMinh} readOnly /></td>
-                  <td>
-                    <button onClick={() => handleTrangThaiChange(sv, 1)} style={{ marginRight: 8, backgroundColor: sv.maTrangThai === 1 ? 'green' : '#ccc', color: 'white' }}>Xác nhận</button>
-                    <button onClick={() => handleTrangThaiChange(sv, 2)} style={{ backgroundColor: sv.maTrangThai === 2 ? 'red' : '#ccc', color: 'white' }}>Từ chối</button>
-                  </td>
+                  <td><input type="number" value={sv.diemTotNghiep} onChange={e => handleFieldChange(sv, 'diemTotNghiep', parseFloat(e.target.value))} style={{ width: 60 }} /></td>
+                  <td><input type="checkbox" checked={sv.ketQuaTotNghiep} onChange={e => handleFieldChange(sv, 'ketQuaTotNghiep', e.target.checked)} /></td>
+                  <td><input type="checkbox" checked={sv.dacCachTotNghiep} onChange={e => handleFieldChange(sv, 'dacCachTotNghiep', e.target.checked)} /></td>
+                  <td><button style={{ backgroundColor: 'red', color: 'white', padding: '4px 8px', border: 'none', borderRadius: 4 }} onClick={() => handleDeleteStudent(sv.mssv, sv.maDotDKTN)}>Xóa</button></td>
                 </tr>
                 {expandedMssv === sv.mssv && files.length > 0 && (
                   <tr>
-                    <td colSpan={11}>
+                    <td colSpan={14} className="files-expanded">
                       <ul className="file-list-inline">
                         {files.map(file => <li key={file.id} onClick={() => handlePreviewInline(file.id)}>{file.name}</li>)}
                       </ul>
@@ -244,4 +267,4 @@ function DanhSachSVDangKyTN() {
   );
 }
 
-export default DanhSachSVDangKyTN;
+export default DanhSachSVDuocXacNhan;

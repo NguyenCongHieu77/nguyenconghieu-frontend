@@ -54,7 +54,7 @@
     background-color: #0056b3;
   }
   
-  .add-form {
+  .add-formDV {
     margin: 10px 0;
     padding: 10px;
     border: 1px solid #ddd;
@@ -62,9 +62,9 @@
     border-radius: 6px;
   }
   
-  .add-form input,
-  .add-form select {
-    width: 100%;
+  .add-formDV input,
+  .add-formDV select {
+    width: 96%;
     padding: 6px;
     margin-top: 4px;
   }
@@ -107,4 +107,31 @@
     color: #000000;
     margin-left: auto;
   }
-  
+  /* DanhSachCacDonViThucTap.css */
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;                /* Khoảng cách giữa icon và chữ */
+  padding: 6px 12px;       /* Padding trên/dưới và trái/phải */
+  background-color: #e53e3e; /* Màu đỏ tươi */
+  border: none;
+  border-radius: 4px;
+  color: #fff;             /* Chữ trắng */
+  font-size: 0.875rem;     /* 14px */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c53030; /* Đỏ đậm khi hover */
+}
+
+.delete-btn:active {
+  background-color: #9b2c2c; /* Đỏ đậm hơn khi bấm */
+}
+
+.delete-btn:focus {
+  outline: 2px solid #f56565; /* Viền focus nhẹ */
+  outline-offset: 2px;
+}

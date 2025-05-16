@@ -1,12 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import './Layout.css';
-import { FiSettings, FiLogOut, FiLock, FiMenu } from 'react-icons/fi';
+import './LayoutTN.css';
+import { FiSettings,
+  FiLogOut,
+  FiLock,
+  FiFileText,
+  FiMenu } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 
-function LayoutCBQLCLB() {
+function LayoutQLTN() {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [tenHienThi, setTenHienThi] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
@@ -31,29 +35,37 @@ function LayoutCBQLCLB() {
   return (
     <div>
       <nav className="nav-bar">
-        <span className="logo-text">QUẢN LÝ THỰC TẬP</span>
+        <span className="logo-text">QUẢN LÝ TỐT NGHIỆP</span>
 
-        {/* Nút hamburger cho mobile */}
         <button className="hamburger" onClick={toggleMobileMenu}>
           <FiMenu size={24} />
         </button>
 
         <div className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
-          {/* <NavLink
-            to="danh-sach-sv-dang-ky"
+          <NavLink
+            to="danh-sach-sv-dk-tn"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={closeMenus}
           >
-            Danh Sách SV Đăng Ký
-          </NavLink> */}
+            Danh Sách SV ĐK Tốt Nghiệp
+          </NavLink>
 
           <NavLink
-            to="danh-sach-sv-dang-thuc-tap"
+            to="danh-sach-sv-duoc-xn"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={closeMenus}
           >
-            Danh Sách SV Đang Thực Tập
+            Danh Sách SV Được Xác Nhận
           </NavLink>
+
+          <NavLink
+            to="cac-dot-tot-nghiep"
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onClick={closeMenus}
+          >
+            Danh Sách Các Đợt Tốt Nghiệp
+          </NavLink>
+
         </div>
 
         <div className="setting-container">
@@ -66,7 +78,13 @@ function LayoutCBQLCLB() {
               <div className="dropdown-item" style={{ fontWeight: 'bold', color: '#333' }}>
                 👤 {tenHienThi || 'Chưa đăng nhập'}
               </div>
-
+                <NavLink
+                                to="/layout-cbql-chung/danh-sach-sv-duoc-xac-nhan-tu-clb"
+                                className="dropdown-item"
+                                onClick={closeMenus}
+                              >
+                                <FiFileText size={16} /> QL THỰC TẬP
+                </NavLink>
               <button
                 onClick={handleLogout}
                 className="dropdown-item"
@@ -96,4 +114,4 @@ function LayoutCBQLCLB() {
   );
 }
 
-export default LayoutCBQLCLB;
+export default LayoutQLTN;

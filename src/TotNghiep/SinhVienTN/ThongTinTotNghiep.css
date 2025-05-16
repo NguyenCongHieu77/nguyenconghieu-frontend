@@ -57,3 +57,71 @@
     font-size: 0.9rem;
   }
 }
+.thong-tin-tot-nghiep-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 700px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.status-text {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+}
+
+.status-approved {
+  color: green;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.status-rejected {
+  color: red;
+  font-weight: bold;
+}
+
+.chi-tiet-below-card {
+  max-width: 700px;
+  margin: 10px auto;
+  background-color: #f9f9f9;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.link-submit-section {
+  margin-top: 15px;
+}
+
+.link-submit-section input {
+  width: 98%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.link-submit-section button {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.link-submit-section button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}

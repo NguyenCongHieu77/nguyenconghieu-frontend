@@ -35,6 +35,12 @@
   .sinhvien-lai {
     background-color: #ffd8b1; /* Cam nhạt */
   }
+  .sinhvien-lienthong {
+  background-color: #d6e0f5;
+}
+
+
+
   .registration-form {
     background-color: #f9f9f9;
     border: 2px solid #007bff;

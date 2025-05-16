@@ -1,79 +1,117 @@
 .login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: Arial, sans-serif;
-  }
-  
-  .logo-side {
-    text-align: center;
-    margin-right: 60px;
-  }
-  
-  .logo-side .logo {
-    width: 120px;
-    margin-bottom: 10px;
-  }
-  
-  .forgot-password {
-    display: block;
-    margin-top: 20px;
-    color: #1a73e8;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .form-side {
-    display: flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff; /* Nền trắng cho toàn trang */
+  padding: 20px;
+}
+
+.logo-side {
+  text-align: center;
+  margin-right: 60px;
+  background-color: #ffffff; /* Nền trắng */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+}
+
+.logo-side .logo {
+  width: 220px;
+  margin-bottom: 20px;
+}
+
+.forgot-password {
+  display: block;
+  margin-top: 20px;
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-side {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  background-color: #ffffff; /* Nền trắng */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.2); /* Nền trong suốt */
+  backdrop-filter: blur(5px); /* Tạo hiệu ứng mờ nếu nền có ảnh */
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  padding-left: 10px;
+  background: transparent; /* Trong suốt */
+  color: #333;
+  font-size: 16px;
+}
+
+.input-wrapper input::placeholder {
+  color: #999;
+}
+
+.toggle-password {
+  cursor: pointer;
+  margin-left: 8px;
+  color: #666;
+}
+
+.login-btn {
+  background-color: #2f82ee;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #1a6fe0;
+}
+
+.login-btn svg {
+  margin-right: 8px;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+  .login-page {
     flex-direction: column;
-    width: 320px;
   }
-  
-  .input-wrapper {
-    display: flex;
-    align-items: center;
+
+  .logo-side {
+    margin-right: 0;
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 6px;
-    background-color: #fff;
-    
+    width: 100%;
   }
-  
-  .input-wrapper input {
-    border: none;
-    outline: none;
-    flex: 1;
-    padding-left: 10px;
-   
+
+  .form-side {
+    width: 100%;
   }
-  
-  .toggle-password {
-    cursor: pointer;
-    margin-left: 8px;
-  }
-  
-  .login-btn {
-    background-color: #2f82ee;
-    color: #fff;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .login-btn svg {
-    margin-right: 8px;
-  }
-  
-  .error {
-    color: red;
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
-  
+}

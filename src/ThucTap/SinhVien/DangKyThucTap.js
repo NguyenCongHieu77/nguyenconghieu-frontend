@@ -1,11 +1,9 @@
-// DangKyThucTap.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DangKyThucTap.css';
 import { useNavigate } from 'react-router-dom';
 
 const DangKyThucTap = () => {
-  // Lấy MSSV và Họ tên từ localStorage
   const savedUsername = localStorage.getItem('username') || '';
   const displayName = localStorage.getItem('tenHienThi') || '';
 
@@ -37,7 +35,6 @@ const DangKyThucTap = () => {
 
   const navigate = useNavigate();
 
-  // helper cộng tháng, xử lý tràn ngày
   const addMonths = (dateStr, months) => {
     const d = new Date(dateStr);
     const day = d.getDate();
@@ -47,8 +44,10 @@ const DangKyThucTap = () => {
   };
 
   const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : '';
+  const safe = val => (val === null || val === undefined ? '' : typeof val === 'object' ? JSON.stringify(val) : val);
 
   useEffect(() => {
+<<<<<<< HEAD
     // Lấy danh sách đợt, loại, giảng viên, đơn vị
     axios.get('http://118.69.126.49:5225/api/DotThucTap')
       .then(res => setDotThucTapList(res.data))
@@ -64,6 +63,20 @@ const DangKyThucTap = () => {
       .catch(console.error);
 
     // Kiểm tra nếu đã đăng ký rồi
+=======
+    axios.get('http://118.69.126.49:5225/api/DotThucTap')
+      .then(res => setDotThucTapList(res.data))
+      .catch(console.error);
+
+    axios.get('http://118.69.126.49:5225/api/LoaiThucTap')
+      .then(res => setLoaiThucTapList(res.data))
+      .catch(console.error);
+
+    axios.get('http://118.69.126.49:5225/api/GiangVien')
+      .then(res => setGiangVienList(res.data))
+      .catch(console.error);
+
+>>>>>>> ea1f53b (code moi nhat)
     axios.get('http://118.69.126.49:5225/api/ChiTietThucTap/get-all')
       .then(res => {
         setHasRegistered(res.data.some(item => item.mssv === savedUsername));
@@ -81,8 +94,7 @@ const DangKyThucTap = () => {
 
   const handleCardClick = dot => {
     setSelectedDot(dot);
-    // set ngày bắt đầu & tự tính kết thúc
-    const bd = dot.ngayBatDau.slice(0,10);
+    const bd = dot.ngayBatDau.slice(0, 10);
     let months = 4;
     switch (dot.tenLoaiThucTap) {
       case 'Thực tập sớm': months = 12; break;
@@ -90,12 +102,17 @@ const DangKyThucTap = () => {
       case 'Thực tập lại': months = 4; break;
       default: months = 4;
     }
+
     setFormData(prev => ({
       ...prev,
       maDotThucTap: dot.maDotThucTap,
       ngayBatDau: bd,
       ngayKetThuc: addMonths(bd, months)
     }));
+
+    axios.get(`http://118.69.126.49:5225/api/DonViThucTapTheoDot/${dot.maDotThucTap}`)
+      .then(res => setDonViList(res.data))
+      .catch(console.error);
   };
 
   const handleChange = e => {
@@ -107,9 +124,20 @@ const DangKyThucTap = () => {
   };
 
   const handleDonViChange = e => {
-    handleChange(e);
     const id = +e.target.value;
-    setSelectedDonVi(donViList.find(dv => dv.maDonViThucTap === id) || null);
+    handleChange(e);
+
+    if (!id) {
+      setSelectedDonVi(null);
+      return;
+    }
+
+    axios.get(`http://118.69.126.49:5225/api/DonViThucTap`)
+      .then(res => {
+        const donVi = res.data.find(dv => dv.maDonViThucTap === id);
+        setSelectedDonVi(donVi || null);
+      })
+      .catch(console.error);
   };
 
   const handleSubmit = e => {
@@ -128,39 +156,43 @@ const DangKyThucTap = () => {
 
       <div className="filter-group">
         <label><strong>Loại:</strong></label>
-        <select value={selectedLoai} onChange={e=>setSelectedLoai(e.target.value)}>
+        <select value={selectedLoai} onChange={e => setSelectedLoai(e.target.value)}>
           <option value="">-- Tất cả --</option>
-          {loaiThucTapList.map(l=>(
-            <option key={l.maLoaiThucTap} value={l.maLoaiThucTap}>{l.tenLoaiThucTap}</option>
+          {loaiThucTapList.map(l => (
+            <option key={l.maLoaiThucTap} value={l.maLoaiThucTap}>
+              {l.tenLoaiThucTap}
+            </option>
           ))}
         </select>
 
         <label><strong>Tháng:</strong></label>
-        <select value={selectedMonth} onChange={e=>setSelectedMonth(e.target.value)}>
+        <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)}>
           <option value="">-- Tất cả --</option>
-          {[...Array(12)].map((_,i)=>(
+          {[...Array(12)].map((_, i) => (
             <option key={i+1} value={i+1}>Tháng {i+1}</option>
           ))}
         </select>
 
         <label><strong>Năm:</strong></label>
-        <select value={selectedYear} onChange={e=>setSelectedYear(e.target.value)}>
+        <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)}>
           <option value="">-- Tất cả --</option>
-          {[2023,2024,2025,2026].map(y=>(
+          {[2023, 2024, 2025, 2026].map(y => (
             <option key={y} value={y}>{y}</option>
           ))}
         </select>
       </div>
 
       <div className="dot-card-list">
-        {filtered.map(dot=>(
+        {filtered.map(dot => (
           <div
             key={dot.maDotThucTap}
             className={`dot-card ${
-              dot.tenLoaiThucTap==='Thực tập sớm'?'sinhvien-som':
-              dot.tenLoaiThucTap==='Thực tập đúng đợt'?'sinhvien-dungdot':
-              dot.tenLoaiThucTap==='Thực tập lại'?'sinhvien-lai':''}`}
-            onClick={()=>handleCardClick(dot)}
+              dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
+              dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
+              dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' :
+              dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' : ''
+            }`}
+            onClick={() => handleCardClick(dot)}
           >
             <h3>{dot.tenDotThucTap}</h3>
             <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
@@ -175,7 +207,7 @@ const DangKyThucTap = () => {
         <div className="registration-section">
           {hasRegistered ? (
             <div className="already-registered">
-              <h2>Bạn không thể đăng ký được nữa vì bạn đã đăng ký rồi.</h2>
+              <h2>Bạn đã đăng ký rồi nên không thể đăng ký lại.</h2>
             </div>
           ) : (
             <form className="registration-form" onSubmit={handleSubmit}>
@@ -190,15 +222,30 @@ const DangKyThucTap = () => {
               </label>
 
               <label><strong>Ngày bắt đầu:</strong>
-                <input type="date" name="ngayBatDau" value={formData.ngayBatDau} onChange={handleChange} />
+                <input
+                  type="date"
+                  name="ngayBatDau"
+                  value={formData.ngayBatDau}
+                  onChange={handleChange}
+                />
               </label>
 
               <label><strong>Ngày kết thúc:</strong>
-                <input type="date" name="ngayKetThuc" value={formData.ngayKetThuc} readOnly />
+                <input
+                  type="date"
+                  name="ngayKetThuc"
+                  value={formData.ngayKetThuc}
+                  readOnly
+                />
               </label>
 
               <label><strong>Số lần thực tập:</strong>
-                <input type="number" name="lanThucTap" value={formData.lanThucTap} onChange={handleChange} />
+                <input
+                  type="number"
+                  name="lanThucTap"
+                  value={formData.lanThucTap}
+                  onChange={handleChange}
+                />
               </label>
 
               <label><strong>Đơn vị thực tập:</strong>
@@ -209,7 +256,7 @@ const DangKyThucTap = () => {
                   required
                 >
                   <option value="">-- Chọn đơn vị --</option>
-                  {donViList.map(dv=>(
+                  {donViList.map(dv => (
                     <option key={dv.maDonViThucTap} value={dv.maDonViThucTap}>
                       {dv.tenDonViThucTap}
                     </option>
@@ -219,17 +266,16 @@ const DangKyThucTap = () => {
 
               {selectedDonVi && (
                 <div className="donvi-info">
-                  <h4>{selectedDonVi.tenDonViThucTap || ''}</h4>
-                  <p><strong>Địa chỉ:</strong> {selectedDonVi.diaChi || ''}</p>
-                  <p><strong>Điện thoại:</strong> {selectedDonVi.dienThoai || ''}</p>
-                  <p><strong>Người hướng dẫn:</strong> {selectedDonVi.nguoiHuongDan || ''}</p>
-                  <p><strong>Email:</strong> {selectedDonVi.email || ''}</p>
-                  <p><strong>Mô tả:</strong> {selectedDonVi.moTa || ''}</p>
+                  <h4>{safe(selectedDonVi.tenDonViThucTap)}</h4>
+                  <p><strong>Địa chỉ:</strong> {safe(selectedDonVi.diaChi)}</p>
+                  <p><strong>Điện thoại:</strong> {safe(selectedDonVi.dienThoai)}</p>
+                  <p><strong>Người hướng dẫn:</strong> {safe(selectedDonVi.nguoiHuongDan)}</p>
+                  <p><strong>Email:</strong> {safe(selectedDonVi.email)}</p>
+                  <p><strong>Mô tả:</strong> {safe(selectedDonVi.moTa)}</p>
                 </div>
               )}
 
-              <label>
-                <strong>Giảng viên hướng dẫn:</strong>
+              <label><strong>Giảng viên hướng dẫn:</strong>
                 <select
                   name="maGiaoVien"
                   value={formData.maGiaoVien}
@@ -250,7 +296,11 @@ const DangKyThucTap = () => {
                 <button
                   type="button"
                   className="cancel-button"
-                  onClick={() => { setSelectedDot(null); setSelectedDonVi(null); }}
+                  onClick={() => {
+                    setSelectedDot(null);
+                    setSelectedDonVi(null);
+                    setDonViList([]);
+                  }}
                 >
                   Hủy
                 </button>
@@ -264,6 +314,7 @@ const DangKyThucTap = () => {
 };
 
 export default DangKyThucTap;
+<<<<<<< HEAD
 
 
 
@@ -584,3 +635,5 @@ export default DangKyThucTap;
 // };
 
 // export default DangKyThucTap;
+=======
+>>>>>>> ea1f53b (code moi nhat)
