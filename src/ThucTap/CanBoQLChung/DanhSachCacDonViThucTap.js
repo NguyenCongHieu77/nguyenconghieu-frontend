@@ -3,6 +3,9 @@ import axios from "axios";
 import "./DanhSachCacDonViThucTap.css";
 import { FaSearch, FaPlus, FaTrash } from "react-icons/fa";
 
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 const DanhSachCacDonViThucTap = () => {
   const [donVis, setDonVis] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +33,17 @@ const DanhSachCacDonViThucTap = () => {
     };
     fetchData();
   }, []);
+
+  const exportToExcel = () => {
+    const exportData = donVis.map(({ maDonViThucTap, ...rest }) => rest);
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "DanhSachDonVi");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "DanhSachDonViThucTap.xlsx");
+  };
 
   const handleSearch = e => setSearchTerm(e.target.value);
 
@@ -154,6 +168,9 @@ const DanhSachCacDonViThucTap = () => {
         />
         <button className="add-btn" onClick={() => setShowAddForm(prev => !prev)}>
           <FaPlus /> Thêm đơn vị
+        </button>
+        <button className="add-btn" onClick={exportToExcel}>
+          📄 Xuất Excel
         </button>
         <span className="count">Tổng: {filteredData.length}</span>
       </div>

@@ -331,6 +331,27 @@ function ThongTinThucTap() {
                   <button onClick={submitBanDau}>Nộp hồ sơ đăng ký thực tập</button>
                 </>
               )}
+              <div className="hoso-note">
+  <p><strong>Bản cứng Hồ sơ gồm các giấy tờ sau</strong> (Nộp bản photo. Bản chính giữ lại và nộp khi nộp hồ sơ báo cáo thực tập):</p>
+  <ul>
+    <li>
+      <a href="https://docs.google.com/document/d/1wspGE0kSlCY8d8Vi3YdvKtiS9qTIjnwe/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+        Đơn đăng ký đơn vị thực tập
+      </a>
+    </li>
+    <li>
+      <a href="https://docs.google.com/document/d/1oiaO4rsAKrceheGp2gA7fWw8NprKOWXD/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+        Giấy tiếp nhận sinh viên thực tập
+      </a>
+    </li>
+    <li>
+      <a href="https://docs.google.com/document/d/1TOLc5IrJsiZOhwuEzFp4mWC3SJAk4Y9P/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+        Đơn cam kết tự tìm đơn vị thực tập
+      </a>
+    </li>
+  </ul>
+</div>
+
             </div>
             <div className="hoso-ket-thuc">
               {currentHoSoKetThuc?.hoSoThucTapKetThuc ? (
@@ -350,9 +371,10 @@ function ThongTinThucTap() {
                   />
                   <button onClick={submitKetThuc} disabled={selectedDot.tongSoGio < 700}>
                     Cập nhật hồ sơ kết thúc thực tập
-                  </button>
-                </>
+                  </button>             
+                </>              
               ) : (
+                
                 <>
                   <h4>Nộp hồ sơ kết thúc thực tập</h4>
                   <input
@@ -368,8 +390,54 @@ function ThongTinThucTap() {
               {selectedDot.tongSoGio < 700 && (
                 <p className="warning">Phải nộp đầy đủ hồ sơ đăng ký và đủ 700 giờ mới được nộp</p>
               )}
+              <div className="hoso-note">
+  <h3>NỘP BÁO CÁO THỰC TẬP</h3>
+  <p>Sinh viên nộp bản in (cuốn báo cáo) và bản mềm (file báo cáo) theo lịch trình của đợt tham gia làm đồ án.</p>
+  <ul>
+    <li>
+      <strong>Bản in:</strong> SV nộp trong một bìa sơ-mi có dán nhãn ghi rõ: <em>Lớp - MSSV - Họ tên - Đợt báo cáo (tháng/năm)</em>
+    </li>
+    <li>
+      <strong>Sổ nhật ký thực tập:</strong> Có nhận xét của người hướng dẫn và đóng dấu của đơn vị thực tập.
+    </li>
+    <li>
+      <strong>Các giấy tờ (bản chính):</strong>
+      <ul>
+        <li>Giấy tiếp nhận sinh viên thực tập</li>
+        <li>
+          Phiếu nhận xét của đơn vị thực tập: 
+          (<a href="https://docs.google.com/document/d/1wf3dSjgjk5gxSOvycBAoul4PpGbLIeBG/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+            mẫu
+          </a>)
+        </li>
+        <li>
+          Phiếu nhận xét của nhân sự hướng dẫn thực tập: 
+          (<a href="https://docs.google.com/document/d/1K6w64t46D4hkOa47sLk6jIHxHIfJJNKw/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+            mẫu
+          </a>)
+        </li>
+        <li>
+          Đơn cam kết tự tìm đơn vị thực tập (nếu có): 
+          (<a href="https://docs.google.com/document/d/1TOLc5IrJsiZOhwuEzFp4mWC3SJAk4Y9P/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+            mẫu
+          </a>)
+        </li>
+      </ul>
+    </li>
+    <li>Ba (03) cuốn báo cáo có chữ ký của nhân sự hướng dẫn.</li>
+    <li>
+      <strong>Hợp đồng lao động (nếu có):</strong> Nếu sinh viên có HĐLĐ từ 01 năm trở lên, nộp:
+      <ul>
+        <li>Hai (02) bản công chứng HĐLĐ</li>
+        <li>Hai (02) phiếu xác nhận nhân sự đang làm việc tại đơn vị</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
             </div>
           </div>
+          
         </div>
       )}
 

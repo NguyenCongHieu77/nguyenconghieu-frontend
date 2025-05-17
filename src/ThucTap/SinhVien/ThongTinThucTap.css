@@ -173,3 +173,23 @@
 .hoso{
   text-align: center;
 }
+
+
+.hoso-note {
+  background-color: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 12px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.hoso-note ul {
+  margin-top: 6px;
+  margin-left: 20px;
+  padding-left: 0;
+}
+
+.hoso-note li {
+  margin-bottom: 4px;
+}

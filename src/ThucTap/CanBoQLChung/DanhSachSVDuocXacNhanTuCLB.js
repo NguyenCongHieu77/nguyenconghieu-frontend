@@ -3,6 +3,8 @@ import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
 import { saveAs } from 'file-saver';
 import './DanhSachSVDuocXacNhanTuCLB.css';
+import * as XLSX from 'xlsx';
+
 
 function DanhSachSVDuocXacNhanTuCLB() {
   const [dsChiTiet, setDsChiTiet] = useState([]);
@@ -40,6 +42,29 @@ function DanhSachSVDuocXacNhanTuCLB() {
       .catch(err => console.error('Lỗi khi tải dữ liệu:', err))
       .finally(() => setLoading(false));
   }, []);
+
+  const exportToExcel = () => {
+  const data = filtered.map(item => ({
+    MSSV: item.mssv,
+    'Họ tên': `${item.hoSinhVien} ${item.tenSinhVien}`,
+    'Đợt thực tập': item.tenDotThucTap,
+    'Đơn vị': item.tenDonViThucTap,
+    'Trạng thái xác nhận': item.tinhTrangXacNhan,
+    'Nộp đơn đăng ký DVTT': item.xacNhanCBQLDaNopDonDangKyDonViThucTap ? '✔' : '',
+    'Nộp giấy tiếp nhận': item.xacNhanCBQLDaNopGiayTiepNhanSVThucTap ? '✔' : '',
+    'Nộp cam kết tự tìm': item.xacNhanCBQLDaNopDonCamKetTuTimDVTT ? '✔' : '',
+    'Số file đã nộp': (dsFilesMap[item.mssv] || []).length,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'DanhSachSV');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+  saveAs(blob, 'DanhSachSinhVienThucTap.xlsx');
+};
+
 
   // tải files cho mỗi sinh viên
   useEffect(() => {
@@ -246,6 +271,8 @@ function DanhSachSVDuocXacNhanTuCLB() {
         <button onClick={handleApproveAll} style={{ marginLeft: '8px' }}>Xác nhận tất cả</button>
         <button onClick={handleRejectAll} style={{ marginLeft: '8px' }}>Bị từ chối tất cả</button>
         <button onClick={handleDeleteRejected} style={{ marginLeft: '8px' }}>Xóa tất cả Bị từ chối</button>
+        <button onClick={exportToExcel} style={{ marginLeft: '8px' }}>📄 Xuất Excel</button>
+
       </div>
 
       {/* Bảng dữ liệu */}

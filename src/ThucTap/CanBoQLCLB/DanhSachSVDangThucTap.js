@@ -3,6 +3,9 @@ import './DanhSachSVDangThucTap.css';
 import { FiDownload } from 'react-icons/fi';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
+
+
 
 const DanhSachSVDangThucTap = () => {
   const [students, setStudents] = useState([]);
@@ -22,6 +25,8 @@ const DanhSachSVDangThucTap = () => {
   const apiHoSo = 'http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau';
   const apiKetThuc = 'http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc';
   const apiInsertHour = 'http://118.69.126.49:5225/api/GioThucTapSinhVien';
+
+  const [kyFilter, setKyFilter] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -65,6 +70,29 @@ const DanhSachSVDangThucTap = () => {
       console.error('Lỗi fetch dữ liệu:', err);
     }
   };
+
+  const exportToExcel = () => {
+  const data = filteredStudents.map(sv => ({
+    MSSV: sv.mssv,
+    'Họ tên': `${sv.hoSinhVien} ${sv.tenSinhVien}`,
+    'Đơn vị': sv.tenDonViThucTap,
+    'Kỳ': sv.tenDotThucTap,
+    'Ngày BĐ': new Date(sv.ngayBatDau).toLocaleDateString(),
+    'Ngày KT': new Date(sv.ngayKetThuc).toLocaleDateString(),
+    'HS ĐK': (dsFilesMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+    'HS KT': (dsFilesKetThucMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+    'Tổng giờ': getTotalHours(sv.mssv)
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'SinhVienDangTT');
+
+  const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const blob = new Blob([buffer], { type: 'application/octet-stream' });
+  saveAs(blob, 'DanhSachSinhVienDangThucTap.xlsx');
+};
+
 
   const toggleDetail = mssv => {
     setExpandedMSSV(prev => prev === mssv ? null : mssv);
@@ -166,10 +194,13 @@ const DanhSachSVDangThucTap = () => {
     }, 0);
   };
 
-  const filteredStudents = students.filter(sv =>
+  const filteredStudents = students
+  .filter(sv =>
     sv.mssv.includes(searchTerm) ||
     (`${sv.hoSinhVien} ${sv.tenSinhVien}`.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  )
+  .filter(sv => !kyFilter || sv.tenDotThucTap === kyFilter);
+
 
   return (
     <div>
@@ -181,6 +212,13 @@ const DanhSachSVDangThucTap = () => {
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
+        <select value={kyFilter} onChange={e => setKyFilter(e.target.value)}>
+  <option value="">-- Tất cả đợt --</option>
+  {[...new Set(students.map(sv => sv.tenDotThucTap))].map((ky, i) => (
+    <option key={i} value={ky}>{ky}</option>
+  ))}
+</select>
+
         <button onClick={() => filteredStudents.forEach(sv => downloadFile(sv.mssv))}>
           Tải tất cả HS ĐK
         </button>
@@ -192,12 +230,14 @@ const DanhSachSVDangThucTap = () => {
         }}>
           Tải tất cả HS KT
         </button>
+        <button onClick={exportToExcel}>📄 Xuất Excel</button>
+
       </div>
 
       <table className="main-table">
         <thead>
           <tr>
-            <th>MSSV</th><th>Họ Tên</th><th>Đơn Vị</th><th>Kỳ</th>
+            <th>MSSV</th><th>Họ Tên</th><th>Đơn Vị</th><th>Đợt</th>
             <th>Ngày BĐ</th><th>Ngày KT</th><th>HS ĐK</th><th>HS KT</th>
             <th>Tổng giờ</th><th>Chi tiết</th><th>Xoá SV</th>
           </tr>

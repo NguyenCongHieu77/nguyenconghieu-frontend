@@ -4,6 +4,8 @@ import { FaSearch } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { saveAs } from "file-saver";
 import './DanhSachSVHienDangThucTap.css';
+import * as XLSX from "xlsx";
+
 
 function DanhSachSVHienDangThucTap() {
   const [dsChiTiet, setDsChiTiet] = useState([]);
@@ -69,6 +71,33 @@ function DanhSachSVHienDangThucTap() {
     const kt = dsKetThuc.find(k => k.mssv === ct.mssv && k.maDotThucTap === ct.maDotThucTap) || {};
     return { ...ct, ...hs, ...kt };
   });
+
+  const exportToExcel = () => {
+  const data = filtered.map(item => ({
+    MSSV: item.mssv,
+    'Họ tên': `${item.hoSinhVien} ${item.tenSinhVien}`,
+    'Đợt': item.tenDotThucTap,
+    'Đơn vị': item.tenDonViThucTap,
+    'HS ĐK': (dsFilesMap[item.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+    'HS KT': (dsFilesKetThucMap[item.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+    'Sổ nhật ký': item.xacNhanCBQLDaNopSoNhatKyThucTap ? '✔' : '',
+    'Giấy tiếp nhận SV': item.xacNhanCBQLDaNopGiayTiepNhanSVThucTap ? '✔' : '',
+    'Nhận xét ĐVTT': item.xacNhanCBQLDaNopPhieuNhanXetCuaDVTT ? '✔' : '',
+    'Nhận xét NSHD': item.xacNhanCBQLDaNopPhieuNhanXetCuaNhanSuHDThucTap ? '✔' : '',
+    'Cam kết TT': item.xacNhanCBQLDaNopDonCamKetTuTimDVTT ? '✔' : '',
+    'Báo cáo': item.xacNhanCBQLDaNopCuonBaoCao ? '✔' : '',
+    'HĐ Lao động': item.xacNhanCBQLDaNopHopDongLaoDong ? '✔' : '',
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'SinhVienTT');
+
+  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+  saveAs(blob, "DanhSachSinhVienDangThucTap.xlsx");
+};
+
 
   const filtered = merged
     .filter(item => !!item.tinhTrangXacNhan)
@@ -208,6 +237,8 @@ function DanhSachSVHienDangThucTap() {
         <span className="total-count">Tổng: {filtered.length}</span>
         <button onClick={downloadAllInitial} className="export-btn">Tải tất cả HS đăng ký</button>
         <button onClick={downloadAllKetThuc} className="export-btn">Tải tất cả HS kết thúc</button>
+        <button onClick={exportToExcel} className="export-btn">📄 Xuất Excel</button>
+
       </div>
 
       <table className="danh-sach-table">

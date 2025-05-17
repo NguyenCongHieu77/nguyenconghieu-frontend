@@ -125,3 +125,247 @@
   background-color: #aaa;
   cursor: not-allowed;
 }
+.report-submit-section {
+    margin-top: 15px;
+}
+.report-submit-section input {
+  width: 98%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.report-submit-section button {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+}
+/* ThongTinTotNghiep.css */
+
+/* Reset cơ bản */
+* {
+  box-sizing: border-box;
+  /* margin: 0; */
+  padding: 0;
+}
+
+/* Card chính */
+.thong-tin-tot-nghiep-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.thong-tin-tot-nghiep-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* Tiêu đề và nội dung */
+.thong-tin-tot-nghiep-card h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+.thong-tin-tot-nghiep-card p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #555;
+}
+.thong-tin-tot-nghiep-card p strong {
+  color: #222;
+}
+
+/* Trạng thái loading / lỗi */
+.status-text {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+  font-style: italic;
+}
+
+/* Các trạng thái màu sắc */
+.status-approved {
+  color: #2e7d32; /* xanh lá đậm */
+  font-weight: 600;
+}
+.status-pending {
+  color: #f9a825; /* vàng */
+  font-weight: 600;
+}
+.status-rejected {
+  color: #c62828; /* đỏ */
+  font-weight: 600;
+}
+
+/* Phần chi tiết bật ra */
+.chi-tiet-below-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chi-tiet-section {
+  background: #fafafa;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #eee;
+}
+.chi-tiet-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+.chi-tiet-section p {
+  margin: 0.5rem 0;
+}
+
+/* Link hiển thị */
+.chi-tiet-section a {
+  color: #1e88e5;
+  text-decoration: none;
+  word-break: break-all;
+}
+.chi-tiet-section a:hover {
+  text-decoration: underline;
+}
+
+/* Phần nộp link chung */
+.link-submit-section,
+.report-submit-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  border: 1px solid #ddd;
+}
+.link-submit-section h4,
+.report-submit-section h4 {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+/* Input */
+.link-submit-section input,
+.report-submit-section input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+.link-submit-section input:focus,
+.report-submit-section input:focus {
+  outline: none;
+  border-color: #1e88e5;
+}
+
+/* Button */
+.link-submit-section button,
+.report-submit-section button {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background: #1e88e5;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.link-submit-section button:disabled,
+.report-submit-section button:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+.link-submit-section button:hover:not(:disabled),
+.report-submit-section button:hover:not(:disabled) {
+  background: #1565c0;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .thong-tin-tot-nghiep-card,
+  .chi-tiet-below-card {
+    padding: 1rem;
+  }
+  .thong-tin-tot-nghiep-card h2 {
+    font-size: 1.5rem;
+  }
+  .chi-tiet-section h3 {
+    font-size: 1.25rem;
+  }
+}
+/* === Mở rộng và làm rõ phần CHI TIẾT === */
+
+/* Khung ngoài của phần chi tiết */
+.chi-tiet-below-card {
+  width: 100%;                /* full container width */
+  max-width: 900px;           /* mở rộng tối đa */
+  margin: 1.5rem auto;        /* căn giữa với khoảng cách trên/dưới */
+  padding: 1rem;              /* thêm khoảng đệm */
+}
+
+/* Nội dung chi tiết dùng grid để chia cột, tạo khoảng cách rõ ràng */
+.chi-tiet-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem 2rem;             /* hàng:1rem, cột:2rem */
+  background: #fafafa;
+  padding: 2rem;              /* thêm đệm bên trong */
+  border-radius: 0.75rem;
+  border: 1px solid #eee;
+}
+
+/* Tiêu đề “THÔNG TIN CHI TIẾT” */
+.chi-tiet-section h3 {
+  grid-column: 1 / -1;        /* cho tiêu đề băng ngang toàn bộ */
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
+  color: #222;
+  text-align: center;
+}
+
+/* Các dòng thông tin */
+.chi-tiet-section p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #444;
+  margin: 0.5rem 0;
+}
+
+/* Link và trạng thái */
+.chi-tiet-section a {
+  color: #1976d2;
+  text-decoration: none;
+}
+.chi-tiet-section a:hover {
+  text-decoration: underline;
+}
+
+/* Điều chỉnh khoảng cách giữa các khối nộp link */
+.link-submit-section,
+.report-submit-section {
+  grid-column: 1 / -1;        /* kéo dài hết chiều ngang grid */
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+}
