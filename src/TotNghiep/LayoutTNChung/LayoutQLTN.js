@@ -66,6 +66,14 @@ function LayoutQLTN() {
             Danh Sách Các Đợt Tốt Nghiệp
           </NavLink>
 
+          <NavLink
+            to="thong-ke-tn"
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onClick={closeMenus}
+          >
+            Thống Kê Tốt Nghiệp
+          </NavLink>
+
         </div>
 
         <div className="setting-container">

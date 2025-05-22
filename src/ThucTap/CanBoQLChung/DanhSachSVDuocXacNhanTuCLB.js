@@ -184,18 +184,30 @@ function DanhSachSVDuocXacNhanTuCLB() {
   // Toggle checkbox hồ sơ
   const handleToggle = async (item, field) => {
   const newValue = !item[field.stateKey];
+
+  // Tạo bản sao đầy đủ của trạng thái hiện tại để gửi đúng payload
   const body = {
     mssv: item.mssv,
     maDotThucTap: item.maDotThucTap,
-    xacNhanCBQLDonDangKyDonViThucTap:
-      field.apiKey === 'xacNhanCBQLDonDangKyDonViThucTap' ? newValue : item.xacNhanCBQLDaNopDonDangKyDonViThucTap,
-    xacNhanCBQLGiayTiepNhanSVThucTap:
-      field.apiKey === 'xacNhanCBQLGiayTiepNhanSVThucTap' ? newValue : item.xacNhanCBQLDaNopGiayTiepNhanSVThucTap,
-    xacNhanCBQLDonCamKetTuTimDVTT:
-      field.apiKey === 'xacNhanCBQLDonCamKetTuTimDVTT' ? newValue : item.xacNhanCBQLDaNopDonCamKetTuTimDVTT,
+    xacNhanCBQLDonDangKyDonViThucTap: item.xacNhanCBQLDaNopDonDangKyDonViThucTap,
+    xacNhanCBQLGiayTiepNhanSVThucTap: item.xacNhanCBQLDaNopGiayTiepNhanSVThucTap,
+    xacNhanCBQLDonCamKetTuTimDVTT: item.xacNhanCBQLDaNopDonCamKetTuTimDVTT,
   };
 
-  console.log('🚀 Payload gửi lên:', body);
+  // Ghi đè field bị toggle
+  switch (field.apiKey) {
+    case 'xacNhanCBQLDonDangKyDonViThucTap':
+      body.xacNhanCBQLDonDangKyDonViThucTap = newValue;
+      break;
+    case 'xacNhanCBQLGiayTiepNhanSVThucTap':
+      body.xacNhanCBQLGiayTiepNhanSVThucTap = newValue;
+      break;
+    case 'xacNhanCBQLDonCamKetTuTimDVTT':
+      body.xacNhanCBQLDonCamKetTuTimDVTT = newValue;
+      break;
+    default:
+      break;
+  }
 
   try {
     await axios.put(
@@ -214,6 +226,7 @@ function DanhSachSVDuocXacNhanTuCLB() {
     alert('Cập nhật thất bại');
   }
 };
+
 
 
   // Expand / collapse danh sách file
@@ -272,6 +285,7 @@ function DanhSachSVDuocXacNhanTuCLB() {
         <button onClick={handleRejectAll} style={{ marginLeft: '8px' }}>Bị từ chối tất cả</button>
         <button onClick={handleDeleteRejected} style={{ marginLeft: '8px' }}>Xóa tất cả Bị từ chối</button>
         <button onClick={exportToExcel} style={{ marginLeft: '8px' }}>📄 Xuất Excel</button>
+        <button className="print-btn" onClick={() => window.print()}>In danh sách</button>
 
       </div>
 

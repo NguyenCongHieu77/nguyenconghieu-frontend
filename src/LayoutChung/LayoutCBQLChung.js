@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import './Layout.css';
-import { FiSettings, FiLogOut, FiLock, FiFileText, FiMenu } from 'react-icons/fi';
+import { FiSettings, FiLogOut, FiLock, FiFileText, FiMenu, FiUserPlus } from 'react-icons/fi';
 import React, { useState, useEffect } from 'react';
 
 function LayoutCBQLChung() {
@@ -63,11 +63,27 @@ function LayoutCBQLChung() {
           </NavLink>
 
           <NavLink
+            to="danh-sach-sv-duoc-bao-cao"
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onClick={closeMenus}
+          >
+            Các SV Được Báo Cáo
+          </NavLink>
+
+          <NavLink
             to="danh-sach-cac-dot-thuc-tap"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={closeMenus}
           >
             Các Đợt Thực Tập
+          </NavLink>
+
+          <NavLink
+            to="thong-ke-tt"
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onClick={closeMenus}
+          >
+            Thống Kê Thực Tập
           </NavLink>
         </div>
 
@@ -83,12 +99,20 @@ function LayoutCBQLChung() {
               </div>
 
               <NavLink
-                                              to="/layout-ql-tn/danh-sach-sv-dk-tn"
-                                              className="dropdown-item"
-                                              onClick={closeMenus}
+                         to="/layout-ql-tn/danh-sach-sv-dk-tn"
+                         className="dropdown-item"
+                     onClick={closeMenus}
                                             >
-                                              <FiFileText size={16} />  QL TỐT NGHIỆP
-                              </NavLink>
+                    <FiFileText size={16} />  QL TỐT NGHIỆP
+               </NavLink>
+              <NavLink
+                to="tao-tai-khoan-cho-qlclb"
+                className="dropdown-item"
+                onClick={closeMenus}
+              >
+                <FiUserPlus size={16} style={{ marginRight: '8px' }} />
+                Tạo tài khoản CLB
+              </NavLink>
 
               <button
                 onClick={handleLogout}

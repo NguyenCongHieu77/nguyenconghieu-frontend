@@ -178,7 +178,7 @@ const ThongTinTotNghiep = () => {
       <div className="chi-tiet-section">
         <h3>THÔNG TIN CHI TIẾT</h3>
         <p><strong>Ngày nộp thuyết minh:</strong> {info.ngayNopThuyetMinh || 'Chưa có'}</p>
-        <p><strong>Đủ điều kiện báo cáo:</strong> {info.duDieuKienBaoCao === 'True' ? 'Có' : 'Không'}</p>
+        <p><strong> </strong></p>
         <p><strong>Ngày xét điều kiện:</strong> {info.ngayXetDuDieuKien || 'Chưa có'}</p>
         <p><strong>Kết quả TN:</strong> {info.ketQuaTotNghiep === 'True' ? 'Đạt' : 'Chưa đạt'}</p>
         <p><strong>Điểm TN:</strong> {info.diemTotNghiep}</p>

@@ -181,13 +181,14 @@
   
 
   button {
-    background-color: #3498db;
+    background-color: #2980b9;
     border: none;
     color: white;
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.3s;
+    font-weight: bold;
   }
   
   button:hover {

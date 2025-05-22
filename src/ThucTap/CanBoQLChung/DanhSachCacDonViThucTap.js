@@ -172,6 +172,8 @@ const DanhSachCacDonViThucTap = () => {
         <button className="add-btn" onClick={exportToExcel}>
           📄 Xuất Excel
         </button>
+        <button className="print-btn" onClick={() => window.print()}>In danh sách</button>
+
         <span className="count">Tổng: {filteredData.length}</span>
       </div>
 

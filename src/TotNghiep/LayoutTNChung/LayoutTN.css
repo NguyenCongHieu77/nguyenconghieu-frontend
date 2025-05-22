@@ -61,7 +61,7 @@
   min-width: 160px;
   z-index: 999;
   padding: 6px 0;
-  
+  font-weight: bold;
   right: 0;         /* Đẩy về sát bên phải của container */
   left: auto;       /* Tắt trái để tránh xung đột */
   transform: translateX(-10%);

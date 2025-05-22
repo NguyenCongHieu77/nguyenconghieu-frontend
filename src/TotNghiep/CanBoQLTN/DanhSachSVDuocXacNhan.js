@@ -286,6 +286,7 @@ const handleFieldChange = async (sv, field, value) => {
         <button onClick={handleDownloadAllHoso}>Tải tất cả hồ sơ ĐK đã nộp</button>
         <button onClick={handleDownloadAllReportHoso}>Tải tất cả hồ sơ BC đã nộp</button>
         <button onClick={exportToExcel}>📄 Xuất Excel</button>
+        <button className="print-btn" onClick={() => window.print()}>In danh sách</button>
 
       </div>
       <table border="1" cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>

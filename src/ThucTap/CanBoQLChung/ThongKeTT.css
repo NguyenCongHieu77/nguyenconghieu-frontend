@@ -1,0 +1,51 @@
+/* Toàn bộ khung chứa thống kê */
+.thongke-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Tiêu đề */
+.thongke-container h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Hàng biểu đồ */
+/* .charts-horizontal {
+  display: flex;
+  justify-content: center; 
+  gap: 30px;
+  flex-wrap: wrap;
+} */
+
+
+/* Vùng chứa từng biểu đồ */
+.chart-item {
+  flex: 1 1 100%;
+  height: 400px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+/* Hover effect nhẹ */
+.chart-item:hover {
+  transform: translateY(-4px);
+}
+
+/* Responsive: biểu đồ dọc trên mobile */
+@media screen and (min-width: 768px) {
+  .chart-item {
+    flex: 1 1 48%;
+  }
+}

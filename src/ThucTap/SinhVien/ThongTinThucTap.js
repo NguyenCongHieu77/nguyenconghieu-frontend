@@ -14,7 +14,7 @@ function ThongTinThucTap() {
   const [ketThucLink, setKetThucLink] = useState("");
 
   const [showSelection, setShowSelection] = useState(false);
-  const [chosenType, setChosenType] = useState(null); // 1 = ngoài, 0 = trong
+  const [chosenType, setChosenType] = useState(null);
 
   // modal confirm
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -30,7 +30,6 @@ function ThongTinThucTap() {
   const apiCapNhatHoSoKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/cap-nhat-ho-so";
 
   useEffect(() => {
-    // Load chi tiết, giờ, hồ sơ ban đầu và hồ sơ kết thúc
     const fetchAll = async () => {
       try {
         const [resChiTiet, resGio, resHoSo, resHoSoKT] = await Promise.all([
@@ -73,10 +72,16 @@ function ThongTinThucTap() {
     return "black";
   };
 
+  // Hàm màu cho xác nhận cho báo cáo
+  const getReportConfirmColor = (confirmed) => (confirmed ? "green" : "red");
+
+  // Hàm màu cho kết quả báo cáo
+  const getReportResultColor = (result) =>
+    result === true || result === "True" ? "green" : "red";
+
   const handleCardClick = dot => {
     setSelectedDot(dot);
 
-    // tìm hồ sơ ban đầu
     const hs = dsHoSo.find(
       h => h.mssv === dot.mssv && h.maDotThucTap === dot.maDotThucTap
     );
@@ -89,13 +94,11 @@ function ThongTinThucTap() {
     }
     setBanDauLink(hs?.hoSoThucTapBanDau || "");
 
-    // tìm hồ sơ kết thúc
     const hsKt = dsHoSoKetThuc.find(
       h => h.mssv === dot.mssv && h.maDotThucTap === dot.maDotThucTap
     );
     setKetThucLink(hsKt?.hoSoThucTapKetThuc || "");
 
-    // load giờ
     axios
       .get(apiGio)
       .then(res => {
@@ -109,8 +112,7 @@ function ThongTinThucTap() {
       .catch(err => console.error("Lỗi khi lấy giờ thực tập:", err));
   };
 
-  // bấm Có/Không lần đầu
-  const handleChoiceClick = value => {
+    const handleChoiceClick = value => {
     setPendingChoice(value);
     setShowConfirmModal(true);
   };
@@ -179,7 +181,6 @@ function ThongTinThucTap() {
   const currentHoSoKetThuc = dsHoSoKetThuc.find(
     h => selectedDot && h.mssv === selectedDot.mssv && h.maDotThucTap === selectedDot.maDotThucTap
   );
-
   return (
     <div className="thongtin-container">
       <h2>THÔNG TIN THỰC TẬP CỦA BẠN</h2>
@@ -198,7 +199,22 @@ function ThongTinThucTap() {
                 {item.tinhTrangXacNhan}
               </span>
             </p>
+            <p>
+              <strong>Xác nhận cho báo cáo:</strong>{" "}
+              <span style={{ color: getReportConfirmColor(item.xacNhanChoBaoCao) }}>
+                {item.xacNhanChoBaoCao ? "Được Báo Cáo" : "Không Được Báo Cáo"}
+              </span>
+            </p>
             <p><strong>Tổng giờ:</strong> {item.tongSoGio} giờ</p>
+            <p><strong>Điểm báo cáo:</strong> {item.diemBaoCao}</p>
+            <p>
+              <strong>Kết quả báo cáo:</strong>{" "}
+              <span style={{ color: getReportResultColor(item.ketQuaBaoCao) }}>
+                {(item.ketQuaBaoCao === true || item.ketQuaBaoCao === "True")
+                  ? "Đạt"
+                  : "Không Đạt"}
+              </span>
+            </p>
           </div>
         ))}
       </div>

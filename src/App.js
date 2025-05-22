@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DangNhap from "./DangNhap/DangNhap";
 import DoiMatKhau from "./DangNhap/DoiMatKhau";
 import QuenMatKhau from "./DangNhap/QuenMatKhau";
+import TaoTaiKhoanChoQLCLB from "./DangNhap/TaoTaiKhoanChoQLCLB";
 
 
 import LayoutSV from "./LayoutChung/LayoutSV";
@@ -25,7 +26,10 @@ import DanhSachSVDangThucTap from "./ThucTap/CanBoQLCLB/DanhSachSVDangThucTap";
 import DanhSachCacDonViThucTap from "./ThucTap/CanBoQLChung/DanhSachCacDonViThucTap";
 import DanhSachSVDuocXacNhanTuCLB from "./ThucTap/CanBoQLChung/DanhSachSVDuocXacNhanTuCLB";
 import DanhSachSVHienDangThucTap from "./ThucTap/CanBoQLChung/DanhSachSVHienDangThucTap";
+import DanhSachSVDuocBaoCao from "./ThucTap/CanBoQLChung/DanhSachSVDuocBaoCao";
 import DanhSachCacDotThucTap from "./ThucTap/CanBoQLChung/DanhSachCacDotThucTap";
+import ThongkeTT from "./ThucTap/CanBoQLChung/ThongKeTT";
+
 
 import DangKyTotNghiep from "./TotNghiep/SinhVienTN/DangKyTotNghiep";
 import ThongTinTotNghiep from "./TotNghiep/SinhVienTN/ThongTinTotNghiep";
@@ -33,6 +37,7 @@ import ThongTinTotNghiep from "./TotNghiep/SinhVienTN/ThongTinTotNghiep";
 import DanhSachSVDangKyTN from "./TotNghiep/CanBoQLTN/DanhSachSVDangKyTN";
 import DanhSachSVDuocXacNhan from "./TotNghiep/CanBoQLTN/DanhSachSVDuocXacNhan";
 import CacDotTotNghiep from "./TotNghiep/CanBoQLTN/CacDotTotNghiep";
+import ThongKeTN from "./TotNghiep/CanBoQLTN/ThongKeTN";
 
 
 function App() {
@@ -65,8 +70,11 @@ function App() {
           <Route path="danh-sach-cac-don-vi-thuc-tap" element={<DanhSachCacDonViThucTap />} />
           <Route path="danh-sach-sv-duoc-xac-nhan-tu-clb" element={<DanhSachSVDuocXacNhanTuCLB />} />
           <Route path="danh-sach-sv-hien-dang-thuc-tap" element={<DanhSachSVHienDangThucTap />} />
+          <Route path="danh-sach-sv-duoc-bao-cao" element={<DanhSachSVDuocBaoCao/>}/>
           <Route path="danh-sach-cac-dot-thuc-tap" element={<DanhSachCacDotThucTap />} />
+          <Route path="thong-ke-tt" element={<ThongkeTT />}/>
           <Route path="doi-mat-khau" element={<DoiMatKhau />} />
+          <Route path="tao-tai-khoan-cho-qlclb" element={<TaoTaiKhoanChoQLCLB/>} />
         </Route>
 
         {/* Layout Sinh Viên Đăng Ký Tốt Nghiệp */}
@@ -81,6 +89,7 @@ function App() {
           <Route path="danh-sach-sv-dk-tn" element={<DanhSachSVDangKyTN />} />
           <Route path="danh-sach-sv-duoc-xn" element={<DanhSachSVDuocXacNhan />} />
           <Route path="cac-dot-tot-nghiep" element={<CacDotTotNghiep />} />
+          <Route path="thong-ke-tn" element={<ThongKeTN/>}/>
           <Route path="doi-mat-khau" element={<DoiMatKhau />} />
         </Route>
 

@@ -339,7 +339,7 @@ function DanhSachSVDangKyTN() {
         <button onClick={() => bulkUpdateTrangThai(2)}>Từ chối tất cả</button>
         <button onClick={handleDownloadAllHoso}>Tải tất cả hồ sơ đã nộp</button>
         <button onClick={exportToExcel}>📄 Xuất Excel</button>
-
+        <button className="print-btn" onClick={() => window.print()}>In danh sách</button>
       </div>
 
       <table border="1" cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>

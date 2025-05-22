@@ -105,7 +105,7 @@
 }
 
 .link-submit-section input {
-  width: 98%;
+  width: 97%;
   padding: 8px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
@@ -147,11 +147,11 @@
 /* ThongTinTotNghiep.css */
 
 /* Reset cơ bản */
-* {
-  box-sizing: border-box;
+/* * { */
+  /* box-sizing: border-box; */
   /* margin: 0; */
-  padding: 0;
-}
+  /* padding: 0; */
+/* } */
 
 /* Card chính */
 .thong-tin-tot-nghiep-card {
@@ -263,7 +263,7 @@
 /* Input */
 .link-submit-section input,
 .report-submit-section input {
-  width: 100%;
+  width: 97%;
   padding: 0.5rem 0.75rem;
   border: 1px solid #ccc;
   border-radius: 0.375rem;
