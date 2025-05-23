@@ -19,6 +19,9 @@ function DanhSachSVDuocXacNhanTuCLB() {
   const [expandedMssv, setExpandedMssv] = useState(null);
   const [previewLink, setPreviewLink] = useState('');
 
+  const [hideApproved, setHideApproved] = useState(true);
+
+
   const apiChiTiet = 'http://118.69.126.49:5225/api/ChiTietThucTap';
   const apiHoSo = 'http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau';
   const apiUpsertGV = 'http://118.69.126.49:5225/api/ChiTietThucTap/gv-upsert';
@@ -97,7 +100,9 @@ function DanhSachSVDuocXacNhanTuCLB() {
       if (filterHasFiles === 'has') return (dsFilesMap[i.mssv] || []).length > 0;
       if (filterHasFiles === 'none') return (dsFilesMap[i.mssv] || []).length === 0;
       return true;
-    });
+    })
+    .filter(i => !hideApproved || i.tinhTrangXacNhan !== 'Đã xác nhận')
+
 
   const getUnique = field => [...new Set(merged.map(x => x[field]).filter(Boolean))];
 
