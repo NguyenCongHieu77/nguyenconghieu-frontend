@@ -25,7 +25,7 @@ const DoiMatKhau = () => {
 
         try {
             const response = await axios.post(
-                "http://118.69.126.49:5225/api/Account/ChangePassword",
+                `${process.env.REACT_APP_API_URL}/api/Account/ChangePassword`,
                 {
                     tenTaiKhoan: mssv,
                     oldPassword,

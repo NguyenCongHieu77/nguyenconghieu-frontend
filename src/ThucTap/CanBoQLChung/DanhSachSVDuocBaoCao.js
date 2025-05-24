@@ -22,9 +22,9 @@ function DanhSachSVDuocBaoCao() {
   const [previewLink, setPreviewLink] = useState("");
   const [filterKQBC, setFilterKQBC] = useState("");
 
-  const apiChiTiet = "http://118.69.126.49:5225/api/ChiTietThucTap";
-  const apiHoSo = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau";
-  const apiKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc";
+  const apiChiTiet = `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap`;
+  const apiHoSo = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau`;
+  const apiKetThuc = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapKetThuc`;
 
   useEffect(() => {
     Promise.all([

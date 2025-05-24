@@ -23,7 +23,7 @@ const CacDotTotNghiep = () => {
   const fetchDots = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await axios.get('http://118.69.126.49:5225/api/DotDangKyTotNghiep/get-all', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/get-all`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const validDots = response.data.filter(dot => !dot.isDelete);
@@ -62,7 +62,7 @@ const CacDotTotNghiep = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.put(`http://118.69.126.49:5225/api/DotDangKyTotNghiep/${formData.maDotDKTN}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/${formData.maDotDKTN}`, {
         ...formData,
         soThang: parseInt(formData.soThang, 10),
         isDelete: false
@@ -80,7 +80,7 @@ const CacDotTotNghiep = () => {
     if (!window.confirm('Bạn có chắc muốn xóa đợt này?')) return;
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.delete(`http://118.69.126.49:5225/api/DotDangKyTotNghiep/${formData.maDotDKTN}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/${formData.maDotDKTN}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setEditingDot(null);
@@ -95,7 +95,7 @@ const CacDotTotNghiep = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const deleteRequests = expiredDots.map(dot =>
-        axios.delete(`http://118.69.126.49:5225/api/DotDangKyTotNghiep/${dot.maDotDKTN}`, {
+        axios.delete(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/${dot.maDotDKTN}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       );
@@ -124,7 +124,7 @@ const CacDotTotNghiep = () => {
   const handleCreate = async () => {
     try {
       const token = localStorage.getItem('accessToken');
-      await axios.post('http://118.69.126.49:5225/api/DotDangKyTotNghiep/insert-dotdktn', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/insert-dotdktn`, {
         ...formData,
         soThang: parseInt(formData.soThang, 10),
         isDelete: false

@@ -21,13 +21,13 @@ function ThongTinThucTap() {
   const [pendingChoice, setPendingChoice] = useState(null);
 
   const mssv = localStorage.getItem("username");
-  const apiChiTiet = "http://118.69.126.49:5225/api/ChiTietThucTap/get-all";
-  const apiGio = "http://118.69.126.49:5225/api/GioThucTapSinhVien/get-all";
-  const apiHoSoBanDau = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau";
-  const apiHoSoKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc";
-  const apiUpsertType = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/chon-thuc-tap-trong-hoac-ngoai";
-  const apiCapNhatHoSoBanDau = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau";
-  const apiCapNhatHoSoKetThuc = "http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/cap-nhat-ho-so";
+  const apiChiTiet = `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/get-all`;
+  const apiGio = `${process.env.REACT_APP_API_URL}/api/GioThucTapSinhVien/get-all`;
+  const apiHoSoBanDau = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau`;
+  const apiHoSoKetThuc = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc`;
+  const apiUpsertType = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau/chon-thuc-tap-trong-hoac-ngoai`;
+  const apiCapNhatHoSoBanDau = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau`;
+  const apiCapNhatHoSoKetThuc = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapKetThuc/cap-nhat-ho-so`;
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -342,13 +342,13 @@ function ThongTinThucTap() {
                   <input
                     value={banDauLink}
                     onChange={e => setBanDauLink(e.target.value)}
-                    placeholder="Link hồ sơ ban đầu"
+                    placeholder="Link Drive hồ sơ ban đầu"
                   />
                   <button onClick={submitBanDau}>Nộp hồ sơ đăng ký thực tập</button>
                 </>
               )}
               <div className="hoso-note">
-  <p><strong>Bản cứng Hồ sơ gồm các giấy tờ sau</strong> (Nộp bản photo. Bản chính giữ lại và nộp khi nộp hồ sơ báo cáo thực tập):</p>
+  <p><strong>Bản cứng & Bản mềm Hồ sơ gồm các giấy tờ sau</strong> (Nộp bản photo. Bản chính giữ lại và nộp khi nộp hồ sơ báo cáo thực tập) (Tạo File Drive có tên "Lớp-MSSV-HoVaTen" add 3 bản PDF bên dưới vào file và sao chép link file và nộp ở trên):</p>
   <ul>
     <li>
       <a href="https://docs.google.com/document/d/1wspGE0kSlCY8d8Vi3YdvKtiS9qTIjnwe/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
@@ -396,7 +396,7 @@ function ThongTinThucTap() {
                   <input
                     value={ketThucLink}
                     onChange={e => setKetThucLink(e.target.value)}
-                    placeholder="Link hồ sơ kết thúc"
+                    placeholder="Link Drive hồ sơ kết thúc"
                   />
                   <button onClick={submitKetThuc} disabled={selectedDot.tongSoGio < 700}>
                     Nộp hồ sơ kết thúc thực tập
@@ -408,7 +408,7 @@ function ThongTinThucTap() {
               )}
               <div className="hoso-note">
   <h3>NỘP BÁO CÁO THỰC TẬP</h3>
-  <p>Sinh viên nộp bản in (cuốn báo cáo) và bản mềm (file báo cáo) theo lịch trình của đợt tham gia làm đồ án.</p>
+  <p>Sinh viên nộp bản in (cuốn báo cáo) và bản mềm (file báo cáo "Lớp-MSSV-HoVaTen") theo lịch trình của đợt tham gia làm đồ án.</p>
   <ul>
     <li>
       <strong>Bản in:</strong> SV nộp trong một bìa sơ-mi có dán nhãn ghi rõ: <em>Lớp - MSSV - Họ tên - Đợt báo cáo (tháng/năm)</em>

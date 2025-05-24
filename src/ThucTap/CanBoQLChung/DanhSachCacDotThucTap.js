@@ -31,7 +31,7 @@ const DanhSachCacDotThucTap = () => {
   useEffect(() => {
     const fetchDots = async () => {
       try {
-        const res = await axios.get('http://118.69.126.49:5225/api/DotThucTap');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/DotThucTap`);
         const dataWithType = res.data.map(dot => ({
           ...dot,
           tenLoaiThucTap: internshipTypes.find(t => t.id === dot.maLoaiThucTap)?.label || ''
@@ -61,7 +61,7 @@ const DanhSachCacDotThucTap = () => {
   const handleAddDotThucTap = async () => {
     try {
       const payload = { ...formData, soThang: parseInt(formData.soThang, 10), isDelete: false };
-      const res = await axios.post('http://118.69.126.49:5225/api/DotThucTap', payload);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/DotThucTap`, payload);
       const newDot = {
         ...payload,
         maDotThucTap: res.data.MaDotThucTap,
@@ -86,8 +86,8 @@ const DanhSachCacDotThucTap = () => {
     setSelectedDot({ ...dot, ngayBatDau: dot.ngayBatDau.slice(0, 10) });
     try {
       const [resDVTrongDot, resAllDV] = await Promise.all([
-        axios.get(`http://118.69.126.49:5225/api/DonViThucTapTheoDot/${dot.maDotThucTap}`),
-        axios.get('http://118.69.126.49:5225/api/DonViThucTap')
+        axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/${dot.maDotThucTap}`),
+        axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTap`)
       ]);
       setDonViTrongDot(resDVTrongDot.data);
       setAvailableDonVi(resAllDV.data);
@@ -108,7 +108,7 @@ const DanhSachCacDotThucTap = () => {
         MaLoaiThucTap: selectedDot.maLoaiThucTap,
         IsDelete: false
       };
-      await axios.put('http://118.69.126.49:5225/api/DotThucTap/dotthuctap-update', payload);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/DotThucTap/dotthuctap-update`, payload);
       setDotThucTapList(prev =>
         prev.map(dot =>
           dot.maDotThucTap === selectedDot.maDotThucTap
@@ -134,7 +134,7 @@ const DanhSachCacDotThucTap = () => {
   const handleDeleteDot = async id => {
     if (!window.confirm('Bạn có chắc chắn muốn xoá đợt thực tập này không?')) return;
     try {
-      await axios.delete(`http://118.69.126.49:5225/api/DotThucTap/delete/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DotThucTap/delete/${id}`);
       setDotThucTapList(prev => prev.filter(dot => dot.maDotThucTap !== id));
       setSelectedDot(null);
     } catch (err) {
@@ -146,16 +146,16 @@ const DanhSachCacDotThucTap = () => {
     const isAdded = donViTrongDot.some(d => d.maDonViThucTap === dvId);
     try {
       if (isAdded) {
-        await axios.delete(`http://118.69.126.49:5225/api/DonViThucTapTheoDot/delete-1Madotdonvi${selectedDot.maDotThucTap}`, {
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/delete-1Madotdonvi${selectedDot.maDotThucTap}`, {
           params: { maDonViThucTap: dvId }
         });
       } else {
-        await axios.post('http://118.69.126.49:5225/api/DonViThucTapTheoDot', {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot`, {
           maDotThucTap: selectedDot.maDotThucTap,
           maDonViThucTaps: [dvId]
         });
       }
-      const res = await axios.get(`http://118.69.126.49:5225/api/DonViThucTapTheoDot/${selectedDot.maDotThucTap}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/${selectedDot.maDotThucTap}`);
       setDonViTrongDot(res.data);
     } catch (err) {
       console.error('Lỗi toggle đơn vị:', err);

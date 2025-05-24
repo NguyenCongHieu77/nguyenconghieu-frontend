@@ -21,7 +21,7 @@ function DanhSachSVDuocXacNhan() {
   const [hosoFilter, setHosoFilter] = useState('');
 
   useEffect(() => {
-    axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`)
       .then(res => {
         const normalized = res.data
           .map(sv => ({
@@ -70,12 +70,12 @@ function DanhSachSVDuocXacNhan() {
     if (!loading) {
       const fetchFiles = async () => {
         const regReqs = students.map(sv =>
-          axios.get(`http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/list-files/${sv.mssv}`)
+          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/list-files/${sv.mssv}`)
             .then(res => ({ mssv: sv.mssv, files: res.data }))
             .catch(() => ({ mssv: sv.mssv, files: [] }))
         );
         const repReqs = students.map(sv =>
-          axios.get(`http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/list-files/${sv.mssv}`)
+          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/list-files/${sv.mssv}`)
             .then(res => ({ mssv: sv.mssv, files: res.data }))
             .catch(() => ({ mssv: sv.mssv, files: [] }))
         );
@@ -125,13 +125,13 @@ function DanhSachSVDuocXacNhan() {
   };
 
   const handlePreviewInline = id => {
-    axios.get(`http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/preview/${id}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/preview/${id}`)
       .then(res => setPreviewLink(res.data.previewLink))
       .catch(() => alert('Lấy preview thất bại'));
   };
 
   const handlePreviewReport = id => {
-    axios.get(`http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/preview/${id}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/preview/${id}`)
       .then(res => setReportPreviewLink(res.data.previewLink))
       .catch(() => alert('Lấy preview báo cáo thất bại'));
   };
@@ -139,7 +139,7 @@ function DanhSachSVDuocXacNhan() {
   const handleDownloadHoso = async mssv => {
     try {
       const response = await axios.get(
-        `http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/download-ho-so/${mssv}`,
+        `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/download-ho-so/${mssv}`,
         { responseType: 'blob' }
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -158,7 +158,7 @@ function DanhSachSVDuocXacNhan() {
   const handleDownloadReportHoso = async mssv => {
     try {
       const response = await axios.get(
-        `http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/download-ho-so/${mssv}`,
+        `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/download-ho-so/${mssv}`,
         { responseType: 'blob' }
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -178,7 +178,7 @@ function DanhSachSVDuocXacNhan() {
     const mssvs = filteredStudents.filter(sv => (reportFilesMap[sv.mssv] || []).length > 0).map(sv => sv.mssv);
     try {
       const response = await axios.get(
-        `http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/download-ho-so-multiple?mssvs=${mssvs.join(',')}`,
+        `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/download-ho-so-multiple?mssvs=${mssvs.join(',')}`,
         { responseType: 'blob' }
       );
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -198,7 +198,7 @@ function DanhSachSVDuocXacNhan() {
   const mssvs = filteredStudents.filter(sv => (filesMap[sv.mssv] || []).length > 0).map(sv => sv.mssv);
   try {
     const response = await axios.get(
-      `http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/download-ho-so-multiple?mssvs=${mssvs.join(',')}`,
+      `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/download-ho-so-multiple?mssvs=${mssvs.join(',')}`,
       { responseType: 'blob' }
     );
     const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -218,7 +218,7 @@ const handleDeleteStudent = async (mssv, maDotDKTN) => {
   if (!window.confirm(`Bạn có chắc chắn muốn xóa sinh viên ${mssv}?`)) return;
 
   try {
-    await axios.delete(`http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/delete/${mssv}/${maDotDKTN}`);
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/delete/${mssv}/${maDotDKTN}`);
     setStudents(prev => prev.filter(sv => sv.mssv !== mssv || sv.maDotDKTN !== maDotDKTN));
   } catch (err) {
     console.error('Lỗi xóa sinh viên:', err);
@@ -256,7 +256,7 @@ const handleFieldChange = async (sv, field, value) => {
   };
 
   try {
-    await axios.put('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/svdktn-updatebyCBQL', payload);
+    await axios.put(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/svdktn-updatebyCBQL`, payload);
     setStudents(prev => prev.map(item => item.mssv === sv.mssv ? { ...item, ...updated } : item));
   } catch (err) {
     console.error('Lỗi cập nhật:', err);

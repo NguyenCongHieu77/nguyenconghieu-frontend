@@ -14,7 +14,7 @@ const TaoTaiKhoanChoQLCLB = () => {
 
   useEffect(() => {
     // Lấy danh sách đơn vị thực tập
-    axios.get('http://118.69.126.49:5225/api/DonViThucTap')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTap`)
       .then(res => setDonViList(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -33,7 +33,7 @@ const TaoTaiKhoanChoQLCLB = () => {
         maDonViThucTap: Number(maDonViThucTap),
       };
 
-      await axios.post('http://118.69.126.49:5225/api/Account/dangkytaikhoan', payload);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/Account/dangkytaikhoan`, payload);
       setMessage('Tạo tài khoản thành công!');
       // Reset form
       setTenTaiKhoan('');

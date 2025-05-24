@@ -22,9 +22,9 @@ function DanhSachSVDuocXacNhanTuCLB() {
   const [hideApproved, setHideApproved] = useState(true);
 
 
-  const apiChiTiet = 'http://118.69.126.49:5225/api/ChiTietThucTap';
-  const apiHoSo = 'http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau';
-  const apiUpsertGV = 'http://118.69.126.49:5225/api/ChiTietThucTap/gv-upsert';
+  const apiChiTiet = `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap`;
+  const apiHoSo = `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau`;
+  const apiUpsertGV = `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/gv-upsert`;
 
   const booleanFields = [
     { label: 'Đơn đăng ký DVTT', stateKey: 'xacNhanCBQLDaNopDonDangKyDonViThucTap', apiKey: 'xacNhanCBQLDonDangKyDonViThucTap' },
@@ -216,7 +216,7 @@ function DanhSachSVDuocXacNhanTuCLB() {
 
   try {
     await axios.put(
-      'http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/cap-nhat-tinh-trang-ho-so-ban-dau-byCBQL',
+      `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau/cap-nhat-tinh-trang-ho-so-ban-dau-byCBQL`,
       body
     );
     setDsHoSo(prev =>

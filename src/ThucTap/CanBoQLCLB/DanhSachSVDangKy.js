@@ -10,7 +10,7 @@
 
 //   useEffect(() => {
 //     // dữ liệu sinh viên chưa xác nhận
-//     axios.get('http://118.69.126.49:5225/api/ChiTietThucTap/get-all')
+//     axios.get('${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/get-all')
 //       .then(res => {
 //         const filtered = res.data.filter(sv => !sv.tenTinhTrang || sv.tenTinhTrang === '');
 //         setDsDangKy(filtered);
@@ -18,12 +18,12 @@
 //       .catch(err => console.error('Lỗi khi tải dsSinhVien:', err));
 
 //     // hồ sơ ban đầu
-//     axios.get('http://118.69.126.49:5225/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau')
+//     axios.get('${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapBanDau/get-all-ho-so-ban-dau')
 //       .then(res => setBanDauList(res.data))
 //       .catch(err => console.error('Lỗi khi tải hồ sơ ban đầu:', err));
 
 //     // hồ sơ kết thúc
-//     axios.get('http://118.69.126.49:5225/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc')
+//     axios.get('${process.env.REACT_APP_API_URL}/api/ChiTietHoSoThucTapKetThuc/get-all-ho-so-ket-thuc')
 //       .then(res => setKetThucList(res.data))
 //       .catch(err => console.error('Lỗi khi tải hồ sơ kết thúc:', err));
 //   }, []);
@@ -68,7 +68,7 @@
 //       tinhTrangXacNhan: 'Đã xác nhận',
 //       ghiChu: 'Đã xác nhận bởi admin'
 //     });
-//     axios.post('http://118.69.126.49:5225/api/ChiTietThucTap/insert-update', payload)
+//     axios.post('${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/insert-update', payload)
 //       .then(() => {
 //         alert(`✅ Đã xác nhận MSSV: ${sv.mssv}`);
 //         setDsDangKy(prev =>
@@ -106,7 +106,7 @@
 
 //   const handleGuiYeuCauNop = sv => {
 //     const payload = buildUpdatePayload(sv, { ghiChu: 'Vui lòng nộp Hồ Sơ Thực Tập' });
-//     axios.post('http://118.69.126.49:5225/api/ChiTietThucTap/insert-update', payload)
+//     axios.post('${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/insert-update', payload)
 //       .then(() => {
 //         alert(`📨 Đã gửi yêu cầu MSSV: ${sv.mssv}`);
 //         setDsDangKy(prev =>

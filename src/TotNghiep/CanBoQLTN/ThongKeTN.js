@@ -29,7 +29,7 @@ const ThongKeTN = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`);
         setData(res.data);
       } catch (err) {
         console.error('Lỗi khi gọi API:', err);

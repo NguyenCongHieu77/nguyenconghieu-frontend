@@ -19,7 +19,7 @@ const ThongTinTotNghiep = () => {
         const mssv = localStorage.getItem('username');
 
         const res = await axios.get(
-          'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all',
+          `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const myInfo = res.data.find(item => item.mssv === mssv);
@@ -29,7 +29,7 @@ const ThongTinTotNghiep = () => {
         }
 
         const resReport = await axios.get(
-          'http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/get-all',
+          `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/get-all`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const myReport = resReport.data.find(item => item.mssv === mssv);
@@ -67,7 +67,7 @@ const ThongTinTotNghiep = () => {
       setSubmitting(true);
       const token = localStorage.getItem('accessToken');
       await axios.post(
-        'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/nopthuyetminh',
+        `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/nopthuyetminh`,
         {
           mssv: info.mssv,
           maDotDKTN: info.maDotDKTN,
@@ -77,7 +77,7 @@ const ThongTinTotNghiep = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const refresh = await axios.get(
-        'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all',
+        `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const updated = refresh.data.find(item => item.mssv === info.mssv);
@@ -109,7 +109,7 @@ const ThongTinTotNghiep = () => {
     const token = localStorage.getItem('accessToken');
 
     await axios.post(
-      'http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/nop-link',
+      `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/nop-link`,
       {
         mssv: mssv,
         maDotDKTN: maDotDKTN,
@@ -127,7 +127,7 @@ const ThongTinTotNghiep = () => {
 
     // Reload lại dữ liệu báo cáo
     const resReport = await axios.get(
-      'http://118.69.126.49:5225/api/ChiTietHoSoBaoCaoTotNghiep/get-all',
+      `${process.env.REACT_APP_API_URL}/api/ChiTietHoSoBaoCaoTotNghiep/get-all`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const updated = resReport.data.find(item => item.mssv === mssv);

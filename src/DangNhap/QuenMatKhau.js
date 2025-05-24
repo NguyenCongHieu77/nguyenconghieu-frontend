@@ -26,7 +26,7 @@ const QuenMatKhau = () => {
   const handleSendOtp = async () => {
     setLoading(true);
     try {
-      await axios.post('http://118.69.126.49:5225/api/otp/send', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/otp/send`, {
         email: form.email
       });
       showMessage('success', 'Đã gửi OTP tới email!');
@@ -41,7 +41,7 @@ const QuenMatKhau = () => {
   const handleVerifyOtp = async () => {
     setLoading(true);
     try {
-      await axios.post('http://118.69.126.49:5225/api/otp/verify', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/otp/verify`, {
         email: form.email,
         otp: form.otp
       });
@@ -57,7 +57,7 @@ const QuenMatKhau = () => {
   const handleResetPassword = async () => {
     setLoading(true);
     try {
-      await axios.post('http://118.69.126.49:5225/api/otp/reset-password', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/otp/reset-password`, {
         email: form.email,
         tenTaiKhoan: form.tenTaiKhoan,
         otp: form.otp,

@@ -39,7 +39,7 @@ function LayoutTotNghiep() {
     const mssv = localStorage.getItem('username');
     if (mssv) {
       axios
-        .get(`http://118.69.126.49:5225/api/ThongBao/thongbao/${mssv}`)
+        .get(`${process.env.REACT_APP_API_URL}/api/ThongBao/thongbao/${mssv}`)
         .then(res => {
           const data = res.data;
           setNotifs(data);
@@ -56,7 +56,7 @@ function LayoutTotNghiep() {
     if (!notif.daDoc) {
       try {
         await axios.put(
-          `http://118.69.126.49:5225/api/ThongBao/thongbaoread/${mssv}/${notif.maThongBao}`
+          `${process.env.REACT_APP_API_URL}/api/ThongBao/thongbaoread/${mssv}/${notif.maThongBao}`
         );
         // update local state
         setNotifs(prev =>

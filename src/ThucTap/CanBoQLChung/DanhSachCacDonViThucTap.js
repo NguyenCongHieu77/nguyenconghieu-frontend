@@ -25,7 +25,7 @@ const DanhSachCacDonViThucTap = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://118.69.126.49:5225/api/DonViThucTap");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTap`);
         setDonVis(res.data);
       } catch (err) {
         console.error("Lỗi khi gọi API:", err);
@@ -68,7 +68,7 @@ const DanhSachCacDonViThucTap = () => {
     const updatedItem = { ...originalItem, [key]: parsedValue };
 
     try {
-      await axios.put(`http://118.69.126.49:5225/api/DonViThucTap/update/${id}`, updatedItem);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/update/${id}`, updatedItem);
       setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
@@ -112,7 +112,7 @@ const DanhSachCacDonViThucTap = () => {
     const updatedItem = { ...originalItem, loaiDonViThucTap: newValue };
 
     try {
-      await axios.put(`http://118.69.126.49:5225/api/DonViThucTap/update/${id}`, updatedItem);
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/update/${id}`, updatedItem);
       setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
     } catch (error) {
       console.error("Lỗi khi cập nhật loại:", error);
@@ -123,7 +123,7 @@ const DanhSachCacDonViThucTap = () => {
     if (!window.confirm('Bạn có chắc muốn xóa đơn vị này?')) return;
 
     try {
-      await axios.delete(`http://118.69.126.49:5225/api/DonViThucTap/delete/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/delete/${id}`);
       setDonVis(prev => prev.filter(item => item.maDonViThucTap !== id));
     } catch (error) {
       console.error("Lỗi khi xóa đơn vị:", error);
@@ -138,7 +138,7 @@ const DanhSachCacDonViThucTap = () => {
 
   const handleAddDonVi = async () => {
     try {
-      const res = await axios.post("http://118.69.126.49:5225/api/DonViThucTap/insert", newDonVi);
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/insert`, newDonVi);
       setDonVis(prev => [...prev, res.data]);
       setShowAddForm(false);
       setNewDonVi({

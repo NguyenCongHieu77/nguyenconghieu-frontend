@@ -57,11 +57,11 @@ const DangKyThucTap = () => {
           donViRes,
           dktRes
         ] = await Promise.all([
-          axios.get('http://118.69.126.49:5225/api/DotThucTap'),
-          axios.get('http://118.69.126.49:5225/api/LoaiThucTap'),
-          axios.get('http://118.69.126.49:5225/api/GiangVien'),
-          axios.get('http://118.69.126.49:5225/api/DonViThucTap'),
-          axios.get('http://118.69.126.49:5225/api/ChiTietThucTap/get-all')
+          axios.get(`${process.env.REACT_APP_API_URL}/api/DotThucTap`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/LoaiThucTap`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/GiangVien`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTap`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/get-all`)
         ]);
 
         setDotThucTapList(dotsRes.data);
@@ -107,7 +107,7 @@ const DangKyThucTap = () => {
       ngayKetThuc: addMonths(bd, months)
     }));
 
-    axios.get(`http://118.69.126.49:5225/api/DonViThucTapTheoDot/${dot.maDotThucTap}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/${dot.maDotThucTap}`)
       .then(res => setDonViList(res.data))
       .catch(console.error);
   };
@@ -129,7 +129,7 @@ const DangKyThucTap = () => {
       return;
     }
 
-    axios.get(`http://118.69.126.49:5225/api/DonViThucTap`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTap`)
       .then(res => {
         const donVi = res.data.find(dv => dv.maDonViThucTap === id);
         setSelectedDonVi(donVi || null);
@@ -141,7 +141,7 @@ const DangKyThucTap = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        'http://118.69.126.49:5225/api/ChiTietThucTap/insert-update',
+        `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/insert-update`,
         formData
       );
       alert(res.data.message);

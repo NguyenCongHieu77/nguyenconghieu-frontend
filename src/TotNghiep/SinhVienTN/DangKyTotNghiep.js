@@ -28,13 +28,13 @@ const DangKyTotNghiep = () => {
       try {
         const token = localStorage.getItem('accessToken');
         const [dotsRes, regsRes, teachersRes] = await Promise.all([
-          axios.get('http://118.69.126.49:5225/api/DotDangKyTotNghiep/get-all', {
+          axios.get(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/get-all`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/get-all', {
+          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get('http://118.69.126.49:5225/api/GiangVien', {
+          axios.get(`${process.env.REACT_APP_API_URL}/api/GiangVien`, {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -108,7 +108,7 @@ const DangKyTotNghiep = () => {
       };
 
       await axios.post(
-        'http://118.69.126.49:5225/api/ChiTietSinhVienDKTN/insert-by-sinhvien',
+        `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/insert-by-sinhvien`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
