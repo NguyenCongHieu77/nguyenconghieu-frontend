@@ -25,7 +25,7 @@ const DangKyThucTap = () => {
     ngayKetThuc: '',
     lanThucTap: 1,
     maDonViThucTap: 0,
-    maGiaoVien: '',
+    maGiaoVien: 'NV0000000',
     xacNhanChoBaoCao: false,
     ketQuaBaoCao: false,
     diemBaoCao: 0,
@@ -252,14 +252,17 @@ const DangKyThucTap = () => {
                 </div>
               )}
 
-              <label>Giảng viên hướng dẫn:
-                <select name="maGiaoVien" value={formData.maGiaoVien} onChange={handleChange} required>
-                  <option value="">_Chưa có giáo viên</option>
-                  {giangVienList.map(gv => (
-                    <option key={gv.maGiaoVien} value={gv.maGiaoVien}>{gv.hoTenGiaoVien}</option>
-                  ))}
-                </select>
-              </label>
+              {false && (
+  <label>Giảng viên hướng dẫn:
+    <select name="maGiaoVien" value={formData.maGiaoVien} onChange={handleChange} required>
+      <option value="">_Chưa có giáo viên</option>
+      {giangVienList.map(gv => (
+        <option key={gv.maGiaoVien} value={gv.maGiaoVien}>{gv.hoTenGiaoVien}</option>
+      ))}
+    </select>
+  </label>
+)}
+
 
               <div className="form-buttons">
                 <button type="submit">Gửi đăng ký</button>

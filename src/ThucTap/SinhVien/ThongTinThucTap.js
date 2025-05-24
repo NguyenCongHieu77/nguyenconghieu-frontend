@@ -73,7 +73,10 @@ function ThongTinThucTap() {
   };
 
   // Hàm màu cho xác nhận cho báo cáo
-  const getReportConfirmColor = (confirmed) => (confirmed ? "green" : "red");
+const getReportConfirmColor = (confirmed) => {
+  const isTrue = confirmed === true || confirmed === "True";
+  return isTrue ? "green" : "red";
+};
 
   // Hàm màu cho kết quả báo cáo
   const getReportResultColor = (result) =>
@@ -202,7 +205,9 @@ function ThongTinThucTap() {
             <p>
               <strong>Xác nhận cho báo cáo:</strong>{" "}
               <span style={{ color: getReportConfirmColor(item.xacNhanChoBaoCao) }}>
-                {item.xacNhanChoBaoCao ? "Được Báo Cáo" : "Không Được Báo Cáo"}
+                {(item.xacNhanChoBaoCao === true || item.xacNhanChoBaoCao === "True")
+                ? "Được Báo Cáo" 
+                : "Không Được Báo Cáo"}
               </span>
             </p>
             <p><strong>Tổng giờ:</strong> {item.tongSoGio} giờ</p>
