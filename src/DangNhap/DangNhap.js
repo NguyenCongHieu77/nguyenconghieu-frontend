@@ -1,56 +1,54 @@
-
-import React, { useState } from "react";
-import axios from "axios";
-import "./DangNhap.css";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+// src/components/DangNhap.js
+import React, { useState } from 'react';
+import axios from 'axios';           // sẽ dùng baseURL
+import { useNavigate } from 'react-router-dom';
+import './DangNhap.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const DangNhap = () => {
-  const [tenTaiKhoan, setTenTaiKhoan] = useState("");
-  const [matKhau, setMatKhau] = useState("");
+  const [tenTaiKhoan, setTenTaiKhoan] = useState('');
+  const [matKhau, setMatKhau]         = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    setError("");
+    setError('');
     setLoading(true);
-
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/Account/login`, {
-        tenTaiKhoan,
-        matKhau,
-      });
+      // <-- CHỈ ĐƯỜNG DẪN RELATIVE, axios tự nối với baseURL
+      const res = await axios.post('/api/Account/login', { tenTaiKhoan, matKhau });
 
-      const data = res.data;
+      // Swagger trả về { accessToken, maNhomTaiKhoan, tenHienThi, maDonViThucTap }
+      const { accessToken, maNhomTaiKhoan, tenHienThi,maDonViThucTap } = res.data;
 
-      // ✅ Lưu thông tin vào localStorage
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("tenHienThi", data.tenHienThi); // dùng cho hiển thị
-      localStorage.setItem("username", tenTaiKhoan); // ✅ MSSV là username
-      localStorage.setItem("user", JSON.stringify(data)); // tuỳ chọn
-      // ✅ Lưu mã đơn vị thực tập
-      if (data.maDonViThucTap) {
-        localStorage.setItem("maDonViThucTap", data.maDonViThucTap);
+      // Lưu token + user info
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('username', tenTaiKhoan);
+      localStorage.setItem('maNhomTaiKhoan', maNhomTaiKhoan);
+      localStorage.setItem('tenHienThi', tenHienThi);
+      localStorage.setItem('maDonViThucTap', maDonViThucTap);
+
+      // Redirect theo role
+      if (maNhomTaiKhoan === 5) {
+        navigate('/layout-cbql-clb/danh-sach-sv-dang-thuc-tap');
+      } else if (maNhomTaiKhoan === 3) {
+        navigate('/layout-sv/dang-ky-thuc-tap');
+      } else if (maNhomTaiKhoan === 1) {
+        navigate('/layout-cbql-chung/danh-sach-sv-duoc-xac-nhan-tu-clb');
+      } else {
+        setError('Quyền truy cập không hợp lệ.');
       }
-
-      setTimeout(() => {
-        if (data.maNhomTaiKhoan === 5) {
-          navigate("/layout-cbql-clb/danh-sach-sv-dang-thuc-tap");
-        } else if (data.maNhomTaiKhoan === 3) {
-          navigate("/layout-sv/dang-ky-thuc-tap");
-        } else if (data.maNhomTaiKhoan === 1) {
-          navigate("/layout-cbql-chung/danh-sach-sv-duoc-xac-nhan-tu-clb");
-        } else {
-          setLoading(false);
-          setError("Quyền truy cập không hợp lệ.");
-        }
-      }, 2000);
-    } catch (error) {
-      setError(error.response?.data?.message || "Tên đăng nhập hoặc mật khẩu không đúng");
+    } catch (err) {
+      setError(
+        err.response?.data?.message === 'Tên đăng nhập hoặc mật khẩu không đúng.'
+          ? 'Tên đăng nhập hoặc mật khẩu không đúng.'
+          : 'Đăng nhập thất bại.'
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -60,42 +58,37 @@ const DangNhap = () => {
       <div className="logo-side">
         <img src="/image/logo.png" alt="Logo" className="logo" />
         <h2>ĐĂNG NHẬP</h2>
-        <a href="/quen-mat-khau" className="forgot-password">
-          QUÊN MẬT KHẨU
-        </a>
+        <a href="/quen-mat-khau" className="forgot-password">QUÊN MẬT KHẨU</a>
       </div>
       <form className="form-side" onSubmit={handleSubmit}>
         {error && <p className="error">{error}</p>}
-
         <div className="input-wrapper">
-          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon icon={faUser}/>
           <input
             type="text"
             placeholder="Tên đăng nhập"
             value={tenTaiKhoan}
-            onChange={(e) => setTenTaiKhoan(e.target.value)}
+            onChange={e => setTenTaiKhoan(e.target.value)}
             required
           />
         </div>
-
         <div className="input-wrapper">
-          <FontAwesomeIcon icon={faLock} />
+          <FontAwesomeIcon icon={faLock}/>
           <input
-            type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
             placeholder="Mật khẩu"
             value={matKhau}
-            onChange={(e) => setMatKhau(e.target.value)}
+            onChange={e => setMatKhau(e.target.value)}
             required
           />
           <FontAwesomeIcon
             icon={showPassword ? faEyeSlash : faEye}
             className="toggle-password"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={() => setShowPassword(v => !v)}
           />
         </div>
-
         <button className="login-btn" type="submit" disabled={loading}>
-          <FontAwesomeIcon icon={faLock} /> {loading ? "Đang đăng nhập..." : "ĐĂNG NHẬP"}
+          <FontAwesomeIcon icon={faLock}/> {loading ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
         </button>
       </form>
     </div>
