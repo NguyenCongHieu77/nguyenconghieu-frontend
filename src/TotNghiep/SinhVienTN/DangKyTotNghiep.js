@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './DangKyTotNghiep.css';
+import NotificationCard from '../../DangNhap/ThongBaoHeThong'; // Assuming NotificationCard is in the same directory or a common 'components' folder
 
 const DangKyTotNghiep = () => {
   const storedMssv = localStorage.getItem('username') || '';
@@ -20,23 +21,25 @@ const DangKyTotNghiep = () => {
     hinhThucTotNghiep: ''
   });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+
+  // State for Modal
   const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState(''); // 'info', 'error'
+  const [modalMessage, setModalMessage] = useState('');
+
+  // State for Notification Card
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState(''); // 'success', 'error'
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationSubText, setNotificationSubText] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
         const [dotsRes, regsRes, teachersRes] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/get-all`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`, {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          axios.get(`${process.env.REACT_APP_API_URL}/api/GiangVien`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
+          axios.get(`${process.env.REACT_APP_API_URL}/api/DotDangKyTotNghiep/get-all`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/get-all`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/GiangVien`)
         ]);
 
         const validDots = dotsRes.data.filter(d => !d.isDelete);
@@ -49,26 +52,34 @@ const DangKyTotNghiep = () => {
         setTeachers(teachersRes.data || []);
       } catch (err) {
         console.error('Lỗi fetch:', err);
+        // Display an error notification for data fetching issues
+        setShowNotification(true);
+        setNotificationType('error');
+        setNotificationMessage('Có lỗi khi tải dữ liệu.');
+        setNotificationSubText('Vui lòng thử lại sau.');
       }
     };
     fetchData();
   }, [storedMssv]);
 
   const closeModal = () => setShowModal(false);
+  const closeNotification = () => setShowNotification(false);
 
   const handleSelectDot = dot => {
     if (regs.length > 0) {
-      setMessage({ type: 'info', text: 'Bạn đã đăng ký tốt nghiệp rồi' });
+      setModalType('info');
+      setModalMessage('Bạn đã đăng ký tốt nghiệp rồi.');
       setShowModal(true);
       return;
     }
 
     const now = new Date();
     const start = new Date(dot.tuNgay);
-    const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000);
+    const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000); // 15 days from 'tuNgay'
 
     if (now > expire) {
-      setMessage({ type: 'error', text: 'Đã hết hạn đăng ký cho đợt này.' });
+      setModalType('error');
+      setModalMessage('Đã hết hạn đăng ký cho đợt này.');
       setShowModal(true);
       return;
     }
@@ -82,7 +93,7 @@ const DangKyTotNghiep = () => {
       noiDungNghienCuu: '',
       hinhThucTotNghiep: ''
     }));
-    setMessage({ type: '', text: '' });
+    setShowModal(false); // Close any open modals when a new dot is selected
   };
 
   const handleChange = e => {
@@ -93,10 +104,9 @@ const DangKyTotNghiep = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
-    setMessage({ type: '', text: '' });
+    setShowNotification(false); // Clear any previous notifications
 
     try {
-      const token = localStorage.getItem('accessToken');
       const payload = {
         mssv: formData.mssv,
         maDotDKTN: selectedDot.maDotDKTN,
@@ -109,26 +119,31 @@ const DangKyTotNghiep = () => {
 
       await axios.post(
         `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/insert-by-sinhvien`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
+        payload
       );
 
-      setMessage({ type: 'success', text: 'Đăng ký thành công!' });
+      setShowNotification(true);
+      setNotificationType('success');
+      setNotificationMessage('Đăng ký thành công!');
+      setNotificationSubText('Thông tin đăng ký của bạn đã được gửi.');
+
       setRegs(prev => [...prev, selectedDot.maDotDKTN]);
-      setSelectedDot(null);
+      setSelectedDot(null); // Clear selected dot after successful registration
     } catch (err) {
       const errMsg = err.response?.data?.message || 'Lỗi, vui lòng thử lại.';
-      setMessage({ type: 'error', text: errMsg });
+      setShowNotification(true);
+      setNotificationType('error');
+      setNotificationMessage('Đăng ký thất bại!');
+      setNotificationSubText(errMsg);
     } finally {
       setLoading(false);
-      setShowModal(true);
     }
   };
 
   const now = new Date();
   const dotsWithExpire = dots.map(dot => {
     const start = new Date(dot.tuNgay);
-    const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000);
+    const expire = new Date(start.getTime() + 15 * 24 * 60 * 60 * 1000); // 15 days from start date
     return { ...dot, isExpired: now > expire };
   });
 
@@ -144,11 +159,11 @@ const DangKyTotNghiep = () => {
         <div className="dktn-dot-list">
           {nonExpiredDots.map(dot => {
             const isReg = regs.includes(dot.maDotDKTN);
-            const disabled = regs.length > 0;
+            const disabled = regs.length > 0; // Disable all if already registered for any dot
             return (
               <div
                 key={dot.maDotDKTN}
-                className={`dktn-dot-card ${
+                className={`dktn-dot-card available ${
                   selectedDot?.maDotDKTN === dot.maDotDKTN ? 'active' : ''
                 } ${isReg ? 'registered' : ''} ${disabled ? 'disabled' : ''}`}
                 onClick={() => !disabled && handleSelectDot(dot)}
@@ -208,13 +223,27 @@ const DangKyTotNghiep = () => {
         </div>
       )}
 
+      {/* Modal for information/error messages */}
       {showModal && (
-        <div className="dktn-modal-overlay">
-          <div className="dktn-modal">
-            <p className={message.type}>{message.text}</p>
-            <button className="dktn-modal-close" onClick={closeModal}>Đóng</button>
+        <div className="dktn-modal-overlay" onClick={closeModal}>
+          <div className="dktn-modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Thông báo</h3>
+            <p className={modalType === 'error' ? 'error-text' : ''}>{modalMessage}</p>
+            <div className="modal-actions">
+              <button className="dktn-modal-close" onClick={closeModal}>Đóng</button>
+            </div>
           </div>
         </div>
+      )}
+
+      {/* Notification Card for success/failure of registration */}
+      {showNotification && (
+        <NotificationCard
+          type={notificationType}
+          message={notificationMessage}
+          subText={notificationSubText}
+          onClose={closeNotification}
+        />
       )}
     </div>
   );

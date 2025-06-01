@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./DanhSachCacDonViThucTap.css";
 import { FaSearch, FaPlus, FaTrash } from "react-icons/fa";
-
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import NotificationCard from '../../DangNhap/ThongBaoHeThong'; // Đảm bảo đường dẫn đúng đến component NotificationCard của bạn
 
 const DanhSachCacDonViThucTap = () => {
   const [donVis, setDonVis] = useState([]);
@@ -22,6 +22,16 @@ const DanhSachCacDonViThucTap = () => {
     loaiDonViThucTap: 0,
   });
 
+  // States mới cho Notification Card
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState('success'); // 'success' hoặc 'error'
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationSubText, setNotificationSubText] = useState('');
+
+  // State cho modal xác nhận xóa
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedDonViToDelete, setSelectedDonViToDelete] = useState(null); // Lưu ID đơn vị cần xóa
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,10 +39,14 @@ const DanhSachCacDonViThucTap = () => {
         setDonVis(res.data);
       } catch (err) {
         console.error("Lỗi khi gọi API:", err);
+        setNotificationType('error');
+        setNotificationMessage('Tải dữ liệu thất bại!');
+        setNotificationSubText('Không thể tải danh sách đơn vị thực tập.');
+        setShowNotification(true);
       }
     };
     fetchData();
-  }, []);
+  }, []); // useEffect chỉ chạy một lần khi component mount
 
   const exportToExcel = () => {
     const exportData = donVis.map(({ maDonViThucTap, ...rest }) => rest);
@@ -43,6 +57,12 @@ const DanhSachCacDonViThucTap = () => {
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, "DanhSachDonViThucTap.xlsx");
+
+    setNotificationType('success');
+    setNotificationMessage('Xuất Excel thành công!');
+    setNotificationSubText('Dữ liệu đã được xuất ra file Excel.');
+    setShowNotification(true);
+    setTimeout(() => setShowNotification(false), 5000);
   };
 
   const handleSearch = e => setSearchTerm(e.target.value);
@@ -57,23 +77,70 @@ const DanhSachCacDonViThucTap = () => {
     setTempValue("");
   };
 
+  const sanitizeField = (value) => {
+    if (value === undefined || value === null || (typeof value === "object" && !Array.isArray(value))) {
+      return null;
+    }
+    if (typeof value === "string" && value.trim() === "") {
+      return null;
+    }
+    return value;
+  };
+
   const saveEditing = async () => {
     const { id, key } = editingCell;
-    if (id == null || key == null) return cancelEditing();
+    if (id == null || key == null) {
+      cancelEditing();
+      return;
+    }
 
     const originalItem = donVis.find(item => item.maDonViThucTap === id);
-    if (!originalItem) return cancelEditing();
+    if (!originalItem) {
+      cancelEditing();
+      return;
+    }
 
-    let parsedValue = key === "loaiDonViThucTap" ? parseInt(tempValue, 10) : tempValue;
-    const updatedItem = { ...originalItem, [key]: parsedValue };
+    let parsedValue = tempValue;
+
+    if (key === "loaiDonViThucTap") {
+      parsedValue = isNaN(parseInt(tempValue)) ? null : parseInt(tempValue, 10);
+    } else if (key === "isDelete") {
+      parsedValue = tempValue === "true" || tempValue === true;
+    }
+
+    const updatedItem = {
+      ...originalItem,
+      [key]: parsedValue
+    };
+
+    const sanitizedItem = {
+      maDonViThucTap: updatedItem.maDonViThucTap,
+      tenDonViThucTap: sanitizeField(updatedItem.tenDonViThucTap),
+      dienThoai: sanitizeField(updatedItem.dienThoai),
+      diaChi: sanitizeField(updatedItem.diaChi),
+      nguoiHuongDan: sanitizeField(updatedItem.nguoiHuongDan),
+      email: sanitizeField(updatedItem.email),
+      moTa: sanitizeField(updatedItem.moTa),
+      isDelete: sanitizeField(updatedItem.isDelete),
+      loaiDonViThucTap: sanitizeField(updatedItem.loaiDonViThucTap)
+    };
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/update/${id}`, updatedItem);
-      setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/update/${id}`, sanitizedItem);
+      setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? sanitizedItem : item));
+      setNotificationType('success');
+      setNotificationMessage('Cập nhật thành công!');
+      setNotificationSubText(`Đơn vị ${sanitizedItem.tenDonViThucTap} đã được cập nhật.`);
+      setShowNotification(true);
     } catch (error) {
       console.error("Lỗi khi cập nhật:", error);
+      setNotificationType('error');
+      setNotificationMessage('Cập nhật thất bại!');
+      setNotificationSubText('Có lỗi xảy ra khi cập nhật đơn vị.');
+      setShowNotification(true);
     } finally {
       cancelEditing();
+      setTimeout(() => setShowNotification(false), 5000);
     }
   };
 
@@ -114,21 +181,51 @@ const DanhSachCacDonViThucTap = () => {
     try {
       await axios.put(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/update/${id}`, updatedItem);
       setDonVis(prev => prev.map(item => item.maDonViThucTap === id ? updatedItem : item));
+      setNotificationType('success');
+      setNotificationMessage('Cập nhật loại đơn vị thành công!');
+      setNotificationSubText(`Loại của đơn vị ${originalItem.tenDonViThucTap} đã được cập nhật.`);
+      setShowNotification(true);
     } catch (error) {
       console.error("Lỗi khi cập nhật loại:", error);
+      setNotificationType('error');
+      setNotificationMessage('Cập nhật loại đơn vị thất bại!');
+      setNotificationSubText('Có lỗi xảy ra khi cập nhật loại đơn vị.');
+      setShowNotification(true);
+    } finally {
+      setTimeout(() => setShowNotification(false), 5000);
     }
   };
 
-  const handleDelete = async id => {
-    if (!window.confirm('Bạn có chắc muốn xóa đơn vị này?')) return;
+  // Hàm mở modal xác nhận xóa
+  const openDeleteConfirmModal = (id) => {
+    setSelectedDonViToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  // Hàm xử lý xóa khi xác nhận trong modal
+  const confirmDelete = async () => {
+    setShowDeleteModal(false); // Đóng modal
+    if (selectedDonViToDelete === null) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/delete/${id}`);
-      setDonVis(prev => prev.filter(item => item.maDonViThucTap !== id));
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/delete/${selectedDonViToDelete}`);
+      setDonVis(prev => prev.filter(item => item.maDonViThucTap !== selectedDonViToDelete));
+      setNotificationType('success');
+      setNotificationMessage('Xóa đơn vị thành công!');
+      setNotificationSubText('Đơn vị đã được xóa khỏi danh sách.');
+      setShowNotification(true);
     } catch (error) {
       console.error("Lỗi khi xóa đơn vị:", error);
+      setNotificationType('error');
+      setNotificationMessage('Xóa đơn vị thất bại!');
+      setNotificationSubText('Không thể xóa đơn vị. Có thể đơn vị đang được sử dụng.');
+      setShowNotification(true);
+    } finally {
+      setSelectedDonViToDelete(null); // Reset
+      setTimeout(() => setShowNotification(false), 5000);
     }
   };
+
 
   const filteredData = donVis.filter(item =>
     Object.values(item).some(val =>
@@ -139,7 +236,7 @@ const DanhSachCacDonViThucTap = () => {
   const handleAddDonVi = async () => {
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/DonViThucTap/insert`, newDonVi);
-      setDonVis(prev => [...prev, res.data]);
+      setDonVis(prev => [...prev, res.data]); // Thêm trực tiếp dữ liệu trả về từ API
       setShowAddForm(false);
       setNewDonVi({
         tenDonViThucTap: "",
@@ -150,8 +247,18 @@ const DanhSachCacDonViThucTap = () => {
         moTa: "",
         loaiDonViThucTap: 0
       });
+      setNotificationType('success');
+      setNotificationMessage('Thêm đơn vị thành công!');
+      setNotificationSubText(`Đơn vị ${res.data.tenDonViThucTap} đã được thêm mới.`);
+      setShowNotification(true);
     } catch (error) {
       console.error("Lỗi khi thêm đơn vị:", error);
+      setNotificationType('error');
+      setNotificationMessage('Thêm đơn vị thất bại!');
+      setNotificationSubText('Không thể thêm đơn vị mới. Vui lòng kiểm tra lại thông tin.');
+      setShowNotification(true);
+    } finally {
+      setTimeout(() => setShowNotification(false), 5000);
     }
   };
 
@@ -183,7 +290,7 @@ const DanhSachCacDonViThucTap = () => {
             <tbody>
               {["tenDonViThucTap", "dienThoai", "diaChi", "nguoiHuongDan", "email", "moTa"].map(field => (
                 <tr key={field}>
-                  <td>{field}:</td>
+                  <td>{field.replace(/([A-Z])/g, ' $1').toLowerCase().replace(/^./, str => str.toUpperCase())}:</td> {/* Hiển thị tên trường đẹp hơn */}
                   <td>
                     <input
                       name={field}
@@ -252,7 +359,7 @@ const DanhSachCacDonViThucTap = () => {
                 </select>
               </td>
               <td>
-                <button className="delete-btn" onClick={() => handleDelete(item.maDonViThucTap)}>
+                <button className="delete-btn" onClick={() => openDeleteConfirmModal(item.maDonViThucTap)}>
                   <FaTrash /> Xóa
                 </button>
               </td>
@@ -260,6 +367,30 @@ const DanhSachCacDonViThucTap = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Modal xác nhận xóa */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Xác nhận xóa đơn vị</h3>
+            <p>Bạn có chắc chắn muốn xóa đơn vị **{selectedDonViToDelete}** này không?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDelete} className="btn-confirm-delete">Xác nhận xóa</button>
+              <button onClick={() => setShowDeleteModal(false)} className="btn-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Card */}
+      {showNotification && (
+        <NotificationCard
+          type={notificationType}
+          message={notificationMessage}
+          subText={notificationSubText}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
     </div>
   );
 };

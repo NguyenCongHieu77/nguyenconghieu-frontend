@@ -1,0 +1,406 @@
+/* Container chính */
+.sv-xac-nhan-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* Tiêu đề */
+.sv-xac-nhan-container h2 {
+  text-align: center;
+  color: #0056b3;
+  margin-bottom: 25px;
+  font-size: 2em;
+}
+
+/* Bộ lọc và nút hành động */
+.filters {
+  display: flex
+;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+    /* align-items: center; */
+    /* justify-content: center; */
+    padding: 15px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    max-width: 98%;
+}
+
+.filters input[type="text"],
+.filters select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  min-width: 180px;
+}
+
+.filters button {
+  /* padding: 10px 15px;
+  background-color: #0352a8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease; */
+  font-weight: bold;
+    padding: 10px 20px;
+    background-color: #3964b9;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filters button:hover {
+  background-color: #0056b3;
+}
+
+/* .filters .print-btn {
+  background-color: #6c757d;
+} */
+
+/* .filters .print-btn:hover {
+  background-color: #5a6268;
+} */
+
+/* Bảng */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tr:hover {
+  background-color: #e9e9e9;
+}
+
+/* Nút trong bảng (Tải, Xóa) */
+table button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+table button:hover {
+  opacity: 0.9;
+}
+
+table button.delete-btn { /* Ví dụ nếu bạn có nút xóa riêng */
+  background-color: #dc3545;
+  color: white;
+}
+
+table button.delete-btn:hover {
+  background-color: #c82333;
+}
+
+
+/* Input điểm */
+table input[type="number"] {
+  width: 50px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+}
+
+/* File đã nộp / Chưa nộp */
+.no-files {
+  color: #dc3545; /* Màu đỏ cho "Chưa nộp" */
+  font-weight: bold;
+}
+
+.files-expanded {
+  background-color: #fcfcfc;
+  padding: 10px 20px;
+}
+
+.file-list-inline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.file-list-inline li {
+  background-color: #e9f5ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.file-list-inline li:hover {
+  background-color: #d1edff;
+}
+
+
+/* Modal Overlay (cho cả preview và confirm) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* Thay đổi để phù hợp với định nghĩa mới */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo modal hiển thị trên cùng */
+}
+
+/* Modal Content (cho cả preview và confirm) */
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  width: 60%; /* Để nội dung quyết định chiều rộng */
+  max-width: 90%;
+  position: relative;
+}
+
+/* Nút đóng modal */
+.modal-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: #aaa;
+  line-height: 1; /* Căn chỉnh nút X */
+}
+
+.modal-content .close-btn:hover {
+  color: #666;
+}
+
+/* Cụ thể cho modal xác nhận xóa */
+.modal-content h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.modal-content p {
+  color: #555;
+  font-size: 1.1em;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Khoảng cách giữa các nút */
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.btn-cancel:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-confirm-delete {
+  background-color: #dc3545; /* Màu đỏ cho nút xóa */
+  color: white;
+  border: none;
+}
+
+.btn-confirm-delete:hover {
+  background-color: #c82333; /* Đậm hơn khi hover */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters input,
+  .filters select,
+  .filters button {
+    width: 100%;
+    box-sizing: border-box; /* Đảm bảo padding không làm tràn width */
+    
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  table tr {
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  table td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+  }
+
+  table td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+    content: attr(data-label); /* Use data-label for content */
+  }
+
+  .files-expanded {
+    padding-left: 6px; /* Điều chỉnh padding cho nội dung mở rộng */
+    text-align: left;
+  }
+}
+
+/* Thêm các CSS cho Notification Card từ StyledWrapper */
+/* (Phần này đã được định nghĩa trong NotificationCard.js, nhưng nếu bạn muốn giữ nó ở đây, bạn có thể copy vào) */
+
+/* Nếu bạn muốn NotificationCard nằm độc lập và không ảnh hưởng đến các layout khác,
+   đảm bảo nó có position: fixed và z-index cao.
+   Các style này thường được khuyến nghị đặt trong file của từng component
+   (ví dụ: StyledWrapper trong NotificationCard.js) để dễ quản lý và tránh xung đột.
+   Tuy nhiên, nếu bạn muốn gộp, đây là phần bổ sung:
+*/
+
+/*
+.notification-card-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+}
+
+.notification-card-container .card {
+  width: 330px;
+  height: 80px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 15px;
+}
+.notification-card-container .wave {
+  position: absolute;
+  transform: rotate(90deg);
+  left: -31px;
+  top: 32px;
+  width: 80px;
+}
+.notification-card-container .icon-container {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+.notification-card-container .icon {
+  width: 17px;
+  height: 17px;
+}
+.notification-card-container .message-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  flex-grow: 1;
+}
+.notification-card-container .message-text,
+.notification-card-container .sub-text {
+  margin: 0;
+  cursor: default;
+}
+.notification-card-container .message-text {
+  font-size: 17px;
+  font-weight: 700;
+}
+.notification-card-container .sub-text {
+  font-size: 14px;
+  color: #555;
+}
+.notification-card-container .cross-icon {
+  width: 18px;
+  height: 18px;
+  color: #555;
+  cursor: pointer;
+  margin-right: 5px;
+}
+*/

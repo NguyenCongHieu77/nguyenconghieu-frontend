@@ -1,12 +1,12 @@
 // DanhSachSVDangKyTN.js
 import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
-import './DanhSachSVDangKyTN.css';
+import './DanhSachSVXacNhan.css'; // Make sure this CSS file is present for styling
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
 
-function DanhSachSVDangKyTN() {
+function DanhSachSVXacNhan() {
   const [students, setStudents] = useState([]);
   const [filesMap, setFilesMap] = useState({});
   const [reportFilesMap, setReportFilesMap] = useState({});
@@ -30,7 +30,7 @@ function DanhSachSVDangKyTN() {
         const normalized = res.data.map(sv => ({
           ...sv,
           daNopThuyetMinh: sv.daNopThuyetMinh === 'True',
-          duDieuKienBaoCao: sv.duDieuKienBaoCao === 'True',
+          duDieuKienBaoCao: sv.duDieuKienBaoCao === 'True', // Ensure this is boolean
           ketQuaTotNghiep: sv.ketQuaTotNghiep === 'True',
           dacCachTotNghiep: sv.dacCachTotNghiep === 'True',
           diemTotNghiep: parseFloat(sv.diemTotNghiep) || 0,
@@ -52,21 +52,22 @@ function DanhSachSVDangKyTN() {
     'Mục tiêu': sv.mucTieu,
     'Nội dung NC': sv.noiDungNghienCuu,
     'Hồ sơ ĐK': (filesMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
-    'Đã nộp TM': sv.daNopThuyetMinh ? '✔' : '',
+    // 'Đã nộp TM': sv.daNopThuyetMinh ? '✔' : '', // Removed from export
     'Hồ sơ báo cáo': (reportFilesMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
     'Cuốn báo cáo': reportStatusMap[sv.mssv]?.xacNhanCBQLDaNopFileCuonBaoCao ? '✔' : '',
     'Slide báo cáo': reportStatusMap[sv.mssv]?.xacNhanCBQLDaNopSlideBaoCao ? '✔' : '',
     'Source code': reportStatusMap[sv.mssv]?.xacNhanCBQLDaNopSourceCode ? '✔' : '',
-    'Trạng thái': sv.maTrangThai === 1 ? 'Đã xác nhận' : sv.maTrangThai === 2 ? 'Bị từ chối' : ''
+    'Đủ điều kiện báo cáo': sv.duDieuKienBaoCao ? '✔' : '✖', // New column for export
+    // 'Trạng thái': sv.maTrangThai === 1 ? 'Đã xác nhận' : sv.maTrangThai === 2 ? 'Bị từ chối' : '' // Removed from export
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'SV_DangKyTN');
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'SV_DangKyTN_BiTuChoi'); // Changed sheet name
 
   const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
   const blob = new Blob([buffer], { type: 'application/octet-stream' });
-  saveAs(blob, 'DanhSachSinhVienDangKyTotNghiep.xlsx');
+  saveAs(blob, 'DanhSachSinhVienBiTuChoi.xlsx'); // Changed filename
 };
 
 
@@ -113,7 +114,11 @@ function DanhSachSVDangKyTN() {
   // filtered & searched list
   const filteredStudents = useMemo(() =>
     students.filter(sv => {
-      if (sv.maTrangThai === 1) return false;
+      // ONLY show students with maTrangThai === 1 (Bị từ chối)
+      if (sv.maTrangThai !== 1) return false; 
+      // Ẩn sinh viên đủ điều kiện báo cáo
+    if (sv.duDieuKienBaoCao) return false;
+
       const fullName = `${sv.hoSinhVien} ${sv.tenSinhVien}`.toLowerCase();
       const tenDeTaiTotNghiep = `${sv.tenDeTaiTotNghiep}`.toLowerCase();
 
@@ -216,46 +221,11 @@ function DanhSachSVDangKyTN() {
     }
   };
 
-  // toggle thesis submission
-  const handleToggleThuyetMinh = async sv => {
-    const newStatus = !sv.daNopThuyetMinh;
-    const payload = {
-      mssv: sv.mssv,
-      maDotDKTN: sv.maDotDKTN,
-      maGiaoVien: sv.maGiaoVien,
-      tenDeTaiTotNghiep: sv.tenDeTaiTotNghiep,
-      mucTieu: sv.mucTieu,
-      noiDungNghienCuu: sv.noiDungNghienCuu,
-      daNopThuyetMinh: newStatus,
-      ngayNopThuyetMinh: newStatus ? new Date().toISOString() : null,
-      linkThuyetMinh: sv.linkThuyetMinh || '',
-      ngayXetDuDieuKien: sv.ngayXetDuDieuKien,
-      quyetDinhDacCach: sv.quyetDinhDacCach,
-      hinhThucTotNghiep: sv.hinhThucTotNghiep,
-      ketQuaTotNghiep: sv.ketQuaTotNghiep,
-      diemTotNghiep: sv.diemTotNghiep,
-      dacCachTotNghiep: sv.dacCachTotNghiep,
-      maTrangThai: sv.maTrangThai
-    };
-    try {
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/svdktn-updatebyCBQL`,
-        payload
-      );
-      setStudents(prev =>
-        prev.map(item =>
-          item.mssv === sv.mssv
-            ? { ...item, daNopThuyetMinh: newStatus, ngayNopThuyetMinh: payload.ngayNopThuyetMinh }
-            : item
-        )
-      );
-    } catch (err) {
-      console.error('Cập nhật thất bại:', err);
-      alert('Không thể cập nhật trạng thái nộp thuyết minh.');
-    }
-  };
+  // toggle thesis submission - This function is now removed from the display
+  // const handleToggleThuyetMinh = async sv => { ... };
 
-  // update graduation status per student
+  // update graduation status per student - This function will still be used internally
+  // but the UI for it is removed. Only 'Bị từ chối' students are shown.
   const handleTrangThaiChange = async (sv, trangThaiValue) => {
     const newTrangThai = sv.maTrangThai === trangThaiValue ? 0 : trangThaiValue;
     try {
@@ -274,7 +244,7 @@ function DanhSachSVDangKyTN() {
     }
   };
 
-  // bulk update graduation status
+  // bulk update graduation status (for "Xác nhận tất cả" / "Từ chối tất cả" buttons in filters)
   const bulkUpdateTrangThai = async (value) => {
     for (const sv of filteredStudents) {
       // eslint-disable-next-line no-await-in-loop
@@ -311,14 +281,46 @@ function DanhSachSVDangKyTN() {
     }
   };
 
+  // NEW: Toggle 'duDieuKienBaoCao'
+  const handleToggleDuDieuKienBaoCao = async (sv) => {
+  const newStatus = !sv.duDieuKienBaoCao;
+
+  const payload = {
+    mssv: sv.mssv,
+    maDotDKTN: sv.maDotDKTN,
+    maGiaoVien: sv.maGiaoVien,
+    duDieuKienBaoCao: newStatus
+  };
+
+  try {
+    await axios.put(
+      `${process.env.REACT_APP_API_URL}/api/ChiTietSinhVienDKTN/svdktn-updatebyCBQL`,
+      payload
+    );
+
+    setStudents(prev =>
+      prev.map(item =>
+        item.mssv === sv.mssv
+          ? { ...item, duDieuKienBaoCao: newStatus }
+          : item
+      )
+    );
+  } catch (err) {
+    console.error('Cập nhật điều kiện báo cáo thất bại:', err);
+    alert('Không thể cập nhật đủ điều kiện báo cáo.');
+  }
+};
+
+
+
   if (loading) return <p>Đang tải dữ liệu…</p>;
 
-  const uniqueDots = [...new Set(students.map(s => s.tenDotDKTN))];
-  const uniqueGVs = [...new Set(students.map(s => s.hoTenGiaoVien))];
+  const uniqueDots = [...new Set(students.filter(s => s.maTrangThai === 1).map(s => s.tenDotDKTN))];
+  const uniqueGVs = [...new Set(students.filter(s => s.maTrangThai === 1).map(s => s.hoTenGiaoVien))];
 
   return (
     <div className="sv-xac-nhan-container">
-      <h2>DANH SÁCH SINH VIÊN ĐĂNG KÝ TỐT NGHIỆP</h2>
+      <h2>DANH SÁCH SINH VIÊN ĐƯỢC XÁC NHẬN</h2> {/* Updated title */}
       <div className="filters">
         <input
           placeholder="MSSV, hoặc tên, tên đề tài"
@@ -338,8 +340,9 @@ function DanhSachSVDangKyTN() {
           <option value="nophoso">Đã nộp</option>
           <option value="chuanophoso">Chưa nộp</option>
         </select>
-        <button onClick={() => bulkUpdateTrangThai(1)}>Xác nhận tất cả</button>
-        <button onClick={() => bulkUpdateTrangThai(2)}>Từ chối tất cả</button>
+        {/* Bulk update buttons for status are kept, but they will only affect visible students (maTrangThai === 2) */}
+        {/* <button onClick={() => bulkUpdateTrangThai(1)}>Xác nhận tất cả sinh viên đang hiển thị</button>
+        <button onClick={() => bulkUpdateTrangThai(2)}>Từ chối tất cả sinh viên đang hiển thị</button>  */}
         <button onClick={handleDownloadAllHoso}>Tải tất cả hồ sơ đã nộp</button>
         <button onClick={exportToExcel}>📄 Xuất Excel</button>
         <button className="print-btn" onClick={() => window.print()}>In danh sách</button>
@@ -355,146 +358,121 @@ function DanhSachSVDangKyTN() {
             <th>Tên đề tài</th>
             <th>Mục tiêu</th>
             <th>Nội dung NC</th>
-            <th>Tải file thuyết minh</th>
-            <th>File thuyết minh</th>
-            <th>Đã nộp TM</th>
-            {/* <th>Tải hồ sơ báo cáo</th>
+            {/* Removed: <th>Tải file thuyết minh</th> */}
+            {/* Removed: <th>File thuyết minh</th> */}
+            {/* Removed: <th>Đã nộp TM</th> */}
+            <th>Tải hồ sơ báo cáo</th>
             <th>Hồ sơ báo cáo</th>
             <th>File cuốn báo cáo</th>
             <th>Slide báo cáo</th>
-            <th>Source code</th> */}
-            <th>Trạng thái</th>
+            <th>Source code</th>
+            <th>Xác nhận báo cáo</th> {/* NEW COLUMN HEADER */}
+            {/* Removed: <th>Trạng thái</th> */}
           </tr>
         </thead>
         <tbody>
-          {filteredStudents.map(sv => {
-            const regFiles = filesMap[sv.mssv] || [];
-            const repFiles = reportFilesMap[sv.mssv] || [];
-            const repStatus = reportStatusMap[sv.mssv] || {};
+          {filteredStudents.length > 0 ? (
+            filteredStudents.map(sv => {
+              const regFiles = filesMap[sv.mssv] || [];
+              const repFiles = reportFilesMap[sv.mssv] || [];
+              const repStatus = reportStatusMap[sv.mssv] || {};
 
-            return (
-              <React.Fragment key={sv.mssv}>
-                <tr>
-                  <td>{sv.mssv}</td>
-                  <td>{`${sv.hoSinhVien} ${sv.tenSinhVien}`}</td>
-                  <td>{sv.tenDotDKTN}</td>
-                  <td>{sv.hoTenGiaoVien}</td>
-                  <td>{sv.tenDeTaiTotNghiep}</td>
-                  <td>{sv.mucTieu}</td>
-                  <td>{sv.noiDungNghienCuu}</td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button onClick={() => handleDownloadHoso(sv.mssv)}>Tải hồ sơ</button>
-                  </td>
-                  <td className="files-cell">
-                    {regFiles.length > 0 ? (
-                      <span
-                        onClick={() => handleExpandReg(sv.mssv)}
-                        style={{ cursor: 'pointer', color: '#007bff' }}
-                      >
-                        Đã nộp hồ sơ ({regFiles.length})
-                      </span>
-                    ) : (
-                      <span className="no-files">Chưa nộp hồ sơ</span>
-                    )}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      type="checkbox"
-                      checked={sv.daNopThuyetMinh}
-                      onChange={() => handleToggleThuyetMinh(sv)}
-                    />
-                  </td>
-                  {/* <td style={{ textAlign: 'center' }}>
-                    <button onClick={() => handleDownloadReportHoso(sv.mssv)}>Tải hồ sơ báo cáo</button>
-                  </td>
-                  <td className="files-cell">
-                    {repFiles.length > 0 ? (
-                      <span
-                        onClick={() => handleExpandRep(sv.mssv)}
-                        style={{ cursor: 'pointer', color: '#007bff' }}
-                      >
-                        Đã nộp báo cáo ({repFiles.length})
-                      </span>
-                    ) : (
-                      <span className="no-files">Chưa nộp báo cáo</span>
-                    )}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      type="checkbox"
-                      checked={repStatus.xacNhanCBQLDaNopFileCuonBaoCao || false}
-                      onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopFileCuonBaoCao')}
-                    />
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      type="checkbox"
-                      checked={repStatus.xacNhanCBQLDaNopSlideBaoCao || false}
-                      onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopSlideBaoCao')}
-                    />
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <input
-                      type="checkbox"
-                      checked={repStatus.xacNhanCBQLDaNopSourceCode || false}
-                      onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopSourceCode')}
-                    />
-                  </td> */}
-                  <td style={{ textAlign: 'center' }}>
-                    <button
-                      style={{
-                        marginRight: 8,
-                        backgroundColor: sv.maTrangThai === 1 ? 'green' : '#ccc',
-                        color: 'white', padding: '4px 8px',
-                        border: 'none', borderRadius: 4, cursor: 'pointer'
-                      }}
-                      onClick={() => handleTrangThaiChange(sv, 1)}
-                    >
-                      Xác nhận
-                    </button>
-                    <button
-                      style={{
-                        backgroundColor: sv.maTrangThai === 2 ? 'red' : '#ccc',
-                        color: 'white', padding: '4px 8px',
-                        border: 'none', borderRadius: 4, cursor: 'pointer'
-                      }}
-                      onClick={() => handleTrangThaiChange(sv, 2)}
-                    >
-                      Từ chối
-                    </button>
-                  </td>
-                </tr>
-
-                {expandedRegMssv === sv.mssv && regFiles.length > 0 && (
+              return (
+                <React.Fragment key={sv.mssv}>
                   <tr>
-                    <td colSpan={16} className="files-expanded">
-                      <ul className="file-list-inline">
-                        {regFiles.map(file => (
-                          <li key={file.id} onClick={() => handlePreviewInline(file.id)}>
-                            {file.name}
-                          </li>
-                        ))}
-                      </ul>
+                    <td>{sv.mssv}</td>
+                    <td>{`${sv.hoSinhVien} ${sv.tenSinhVien}`}</td>
+                    <td>{sv.tenDotDKTN}</td>
+                    <td>{sv.hoTenGiaoVien}</td>
+                    <td>{sv.tenDeTaiTotNghiep}</td>
+                    <td>{sv.mucTieu}</td>
+                    <td>{sv.noiDungNghienCuu}</td>
+                    {/* Removed cells for 'Tải file thuyết minh', 'File thuyết minh', 'Đã nộp TM' */}
+                    <td style={{ textAlign: 'center' }}>
+                      <button onClick={() => handleDownloadReportHoso(sv.mssv)}>Tải hồ sơ báo cáo</button>
                     </td>
-                  </tr>
-                )}
+                    <td className="files-cell">
+                      {repFiles.length > 0 ? (
+                        <span
+                          onClick={() => handleExpandRep(sv.mssv)}
+                          style={{ cursor: 'pointer', color: '#007bff' }}
+                        >
+                          Đã nộp báo cáo ({repFiles.length})
+                        </span>
+                      ) : (
+                        <span className="no-files">Chưa nộp báo cáo</span>
+                      )}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={repStatus.xacNhanCBQLDaNopFileCuonBaoCao || false}
+                        onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopFileCuonBaoCao')}
+                      />
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={repStatus.xacNhanCBQLDaNopSlideBaoCao || false}
+                        onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopSlideBaoCao')}
+                      />
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={repStatus.xacNhanCBQLDaNopSourceCode || false}
+                        onChange={() => handleToggleReportStatus(sv, 'xacNhanCBQLDaNopSourceCode')}
+                      />
+                    </td>
+                    {/* NEW COLUMN: Xác nhận báo cáo */}
+                    <td style={{ textAlign: 'center' }}>
+                      <button onClick={() => handleToggleDuDieuKienBaoCao(sv)}>
+  {sv.duDieuKienBaoCao ? 'Hủy đủ điều kiện' : 'Xác nhận đủ điều kiện'}
+</button>
 
-                {expandedRepMssv === sv.mssv && repFiles.length > 0 && (
-                  <tr>
-                    <td colSpan={16} className="files-expanded">
-                      <ul className="file-list-inline">
-                        {repFiles.map(file => (
-                          <li key={file.id} onClick={() => handlePreviewReport(file.id)}>
-                            {file.name}
-                          </li>
-                        ))}
-                      </ul>
                     </td>
+                    {/* Removed 'Trạng thái' column */}
                   </tr>
-                )}
-              </React.Fragment>
-            );
-          })}
+
+                  {/* Expanded Registration Files (if any) */}
+                  {expandedRegMssv === sv.mssv && regFiles.length > 0 && (
+                    <tr>
+                      <td colSpan={11} className="files-expanded"> {/* Adjusted colspan */}
+                        <ul className="file-list-inline">
+                          {regFiles.map(file => (
+                            <li key={file.id} onClick={() => handlePreviewInline(file.id)}>
+                              {file.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Expanded Report Files (if any) */}
+                  {expandedRepMssv === sv.mssv && repFiles.length > 0 && (
+                    <tr>
+                      <td colSpan={11} className="files-expanded"> {/* Adjusted colspan */}
+                        <ul className="file-list-inline">
+                          {repFiles.map(file => (
+                            <li key={file.id} onClick={() => handlePreviewReport(file.id)}>
+                              {file.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="11" style={{ textAlign: 'center', padding: '20px' }}>
+                Không có sinh viên nào trong danh sách.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
@@ -527,4 +505,4 @@ function DanhSachSVDangKyTN() {
   );
 }
 
-export default DanhSachSVDangKyTN;
+export default DanhSachSVXacNhan;

@@ -4,7 +4,7 @@ import { FiDownload } from 'react-icons/fi';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
-
+import NotificationCard from '../../DangNhap/ThongBaoHeThong'; // Import the NotificationCard component
 
 
 const DanhSachSVDangThucTap = () => {
@@ -18,7 +18,18 @@ const DanhSachSVDangThucTap = () => {
   const [dsFilesMap, setDsFilesMap] = useState({});
   const [dsFilesKetThucMap, setDsFilesKetThucMap] = useState({});
   const [previewLink, setPreviewLink] = useState('');
-  
+
+  // States for confirmation modal and notification
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [showConfirmDeleteHourModal, setShowConfirmDeleteHourModal] = useState(false); // New state for hour deletion modal
+  const [hourToDelete, setHourToDelete] = useState(null); // New state to hold hour data for deletion
+
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState('info');
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationSubText, setNotificationSubText] = useState('');
+
 
   const apiChiTiet = `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/get-all`;
   const apiGio = `${process.env.REACT_APP_API_URL}/api/GioThucTapSinhVien/get-all`;
@@ -34,7 +45,7 @@ const DanhSachSVDangThucTap = () => {
   }, []);
 
 
-const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // ép kiểu về number
+  const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // ép kiểu về number
 
 
   const fetchData = async () => {
@@ -73,30 +84,32 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
 
     } catch (err) {
       console.error('Lỗi fetch dữ liệu:', err);
+      showNotificationCard('error', 'Lỗi tải dữ liệu', 'Không thể tải danh sách sinh viên.');
     }
   };
 
   const exportToExcel = () => {
-  const data = filteredStudents.map(sv => ({
-    MSSV: sv.mssv,
-    'Họ tên': `${sv.hoSinhVien} ${sv.tenSinhVien}`,
-    'Đơn vị': sv.tenDonViThucTap,
-    'Kỳ': sv.tenDotThucTap,
-    'Ngày BĐ': new Date(sv.ngayBatDau).toLocaleDateString(),
-    'Ngày KT': new Date(sv.ngayKetThuc).toLocaleDateString(),
-    'HS ĐK': (dsFilesMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
-    'HS KT': (dsFilesKetThucMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
-    'Tổng giờ': getTotalHours(sv.mssv)
-  }));
+    const data = filteredStudents.map(sv => ({
+      MSSV: sv.mssv,
+      'Họ tên': `${sv.hoSinhVien} ${sv.tenSinhVien}`,
+      'Đơn vị': sv.tenDonViThucTap,
+      'Kỳ': sv.tenDotThucTap,
+      'Ngày BĐ': new Date(sv.ngayBatDau).toLocaleDateString(),
+      'Ngày KT': new Date(sv.ngayKetThuc).toLocaleDateString(),
+      'HS ĐK': (dsFilesMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+      'HS KT': (dsFilesKetThucMap[sv.mssv] || []).length > 0 ? 'Đã nộp' : 'Chưa nộp',
+      'Tổng giờ': getTotalHours(sv.mssv)
+    }));
 
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'SinhVienDangTT');
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'SinhVienDangTT');
 
-  const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  const blob = new Blob([buffer], { type: 'application/octet-stream' });
-  saveAs(blob, 'DanhSachSinhVienDangThucTap.xlsx');
-};
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([buffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'DanhSachSinhVienDangThucTap.xlsx');
+    showNotificationCard('success', 'Xuất Excel thành công', 'Dữ liệu đã được xuất ra file Excel.');
+  };
 
 
   const toggleDetail = mssv => {
@@ -112,7 +125,8 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
       const nextMonth = existing + 1;
 
       if (period && nextMonth > period.soThangThucTap) {
-        return alert(`Tháng không thể lớn hơn ${period.soThangThucTap}`);
+        showNotificationCard('warning', 'Thêm giờ thất bại', `Tháng không thể lớn hơn ${period.soThangThucTap}.`);
+        return;
       }
 
       await axios.post(`${apiInsertHour}/insert`, {
@@ -126,8 +140,10 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
 
       fetchData();
       setNewHour({ soGioThucTap: '' });
+      showNotificationCard('success', 'Thêm giờ thành công', `Đã thêm giờ thực tập cho sinh viên ${mssv}.`);
     } catch (err) {
-      alert('Lỗi thêm giờ: ' + err.message);
+      showNotificationCard('error', 'Lỗi thêm giờ', 'Không thể thêm giờ thực tập.');
+      console.error('Lỗi thêm giờ:', err);
     }
   };
 
@@ -142,25 +158,56 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
 
       fetchData();
       setEditing(null);
+      showNotificationCard('success', 'Cập nhật giờ thành công', `Đã cập nhật giờ thực tập cho tháng ${gio.thang}.`);
     } catch (err) {
-      alert('Lỗi cập nhật giờ: ' + err.message);
+      showNotificationCard('error', 'Lỗi cập nhật giờ', 'Không thể cập nhật giờ thực tập.');
+      console.error('Lỗi cập nhật giờ:', err);
     }
   };
 
-  const handleDelete = async id => {
-    if (window.confirm('Xoá giờ thực tập này?')) {
-      await axios.delete(`${apiInsertHour}/delete/${id}`);
-      fetchData();
-    }
+  // Function to open the confirmation modal for deleting an hour
+  const openDeleteHourModal = (hour) => {
+    setHourToDelete(hour);
+    setShowConfirmDeleteHourModal(true);
   };
 
-  const handleDeleteStudent = async (mssv, maDotThucTap) => {
-    if (window.confirm(`Xoá sinh viên ${mssv}?`)) {
+  // Function to confirm and perform the delete for an hour
+  const confirmDeleteHour = async () => {
+    if (hourToDelete) {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/delete/${mssv}/${maDotThucTap}`);
+        await axios.delete(`${apiInsertHour}/delete/${hourToDelete.maGioThucTapSinhVien}`);
         fetchData();
+        showNotificationCard('success', 'Xoá giờ thành công', `Giờ thực tập tháng ${hourToDelete.thang} của ${hourToDelete.mssv} đã được xoá.`);
       } catch (err) {
-        alert('Xoá sinh viên thất bại: ' + err.message);
+        showNotificationCard('error', 'Lỗi xoá giờ', 'Không thể xoá giờ thực tập.');
+        console.error('Lỗi xoá giờ:', err);
+      } finally {
+        setShowConfirmDeleteHourModal(false);
+        setHourToDelete(null);
+      }
+    }
+  };
+
+
+  // Function to open the confirmation modal for deleting a student
+  const openDeleteStudentModal = (mssv, maDotThucTap) => {
+    setStudentToDelete({ mssv, maDotThucTap });
+    setShowConfirmDeleteModal(true);
+  };
+
+  // Function to confirm and perform the delete for a student
+  const confirmDeleteStudent = async () => {
+    if (studentToDelete) {
+      try {
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/delete/${studentToDelete.mssv}/${studentToDelete.maDotThucTap}`);
+        fetchData();
+        showNotificationCard('success', 'Xoá sinh viên thành công', `Sinh viên ${studentToDelete.mssv} đã được xoá.`);
+      } catch (err) {
+        showNotificationCard('error', 'Lỗi xoá sinh viên', 'Không thể xoá sinh viên này.');
+        console.error('Xoá sinh viên thất bại:', err);
+      } finally {
+        setShowConfirmDeleteModal(false);
+        setStudentToDelete(null);
       }
     }
   };
@@ -172,8 +219,9 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
     try {
       const res = await axios.get(url, { responseType: 'blob' });
       saveAs(res.data, `${mssv}_${isKT ? 'HoSoKetThuc' : 'HoSoBanDau'}.zip`);
+      showNotificationCard('success', 'Tải hồ sơ thành công', `Hồ sơ ${isKT ? 'kết thúc' : 'ban đầu'} của ${mssv} đã được tải.`);
     } catch {
-      alert(`Tải ${isKT ? 'HS kết thúc' : 'HS ban đầu'} thất bại`);
+      showNotificationCard('error', 'Tải hồ sơ thất bại', `Không thể tải ${isKT ? 'HS kết thúc' : 'HS ban đầu'} của ${mssv}.`);
     }
   };
 
@@ -185,7 +233,7 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
       const res = await axios.get(url);
       setPreviewLink(res.data.previewLink);
     } catch {
-      alert('Lấy preview thất bại');
+      showNotificationCard('error', 'Xem trước thất bại', 'Không thể lấy liên kết xem trước.');
     }
   };
 
@@ -200,13 +248,20 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
   };
 
   const filteredStudents = students
-  .filter(sv => sv.maDonViThucTap === maDonViThucTapUser) // chỉ hiển thị đúng đơn vị
-  .filter(sv =>
-    sv.mssv.includes(searchTerm) ||
-    (`${sv.hoSinhVien} ${sv.tenSinhVien}`.toLowerCase().includes(searchTerm.toLowerCase()))
-  )
-  .filter(sv => !kyFilter || sv.tenDotThucTap === kyFilter);
+    .filter(sv => sv.maDonViThucTap === maDonViThucTapUser) // chỉ hiển thị đúng đơn vị
+    .filter(sv =>
+      sv.mssv.includes(searchTerm) ||
+      (`${sv.hoSinhVien} ${sv.tenSinhVien}`.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .filter(sv => !kyFilter || sv.tenDotThucTap === kyFilter);
 
+  // Function to display notification card
+  const showNotificationCard = (type, message, subText = '') => {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setNotificationSubText(subText);
+    setShowNotification(true);
+  };
 
 
   return (
@@ -220,11 +275,11 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
           onChange={e => setSearchTerm(e.target.value)}
         />
         <select value={kyFilter} onChange={e => setKyFilter(e.target.value)}>
-  <option value="">-- Tất cả đợt --</option>
-  {[...new Set(students.map(sv => sv.tenDotThucTap))].map((ky, i) => (
-    <option key={i} value={ky}>{ky}</option>
-  ))}
-</select>
+          <option value="">-- Tất cả đợt --</option>
+          {[...new Set(students.map(sv => sv.tenDotThucTap))].map((ky, i) => (
+            <option key={i} value={ky}>{ky}</option>
+          ))}
+        </select>
 
         <button onClick={() => filteredStudents.forEach(sv => downloadFile(sv.mssv))}>
           Tải tất cả HS ĐK
@@ -232,8 +287,11 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
         <button onClick={() => {
           const mssvs = filteredStudents.map(sv => sv.mssv);
           axios.post(`${apiKetThuc}/download-ho-so-multiple`, mssvs, { responseType: 'blob' })
-            .then(r => saveAs(r.data, 'HoSoKT_All.zip'))
-            .catch(() => alert('Tải tất cả HS KT thất bại'));
+            .then(r => {
+              saveAs(r.data, 'HoSoKT_All.zip');
+              showNotificationCard('success', 'Tải tất cả HS KT thành công', 'Đã tải về hồ sơ kết thúc của tất cả sinh viên.');
+            })
+            .catch(() => showNotificationCard('error', 'Tải tất cả HS KT thất bại', 'Có lỗi xảy ra khi tải hồ sơ kết thúc.'));
         }}>
           Tải tất cả HS KT
         </button>
@@ -249,7 +307,7 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
         <thead>
           <tr>
             <th>MSSV</th><th>Họ Tên</th><th>Đơn Vị</th><th>Đợt</th>
-            <th>Ngày BĐ</th><th>Ngày KT</th><th>HS ĐK</th><th>HS KT</th>
+            <th>Ngày BĐ</th><th>Ngày KT</th><th>Hồ Sơ ĐK</th><th>Hồ Sơ BC</th>
             <th>Tổng giờ</th><th>Chi tiết</th><th>Xoá SV</th>
           </tr>
         </thead>
@@ -279,7 +337,7 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
                     </button>
                   </td>
                   <td>
-                    <button onClick={() => handleDeleteStudent(sv.mssv, sv.maDotThucTap)}>
+                    <button onClick={() => openDeleteStudentModal(sv.mssv, sv.maDotThucTap)}>
                       Xoá
                     </button>
                   </td>
@@ -316,7 +374,8 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
                                     </>
                                   : <>
                                       <button onClick={() => setEditing(h)}>Sửa</button>
-                                      <button onClick={() => handleDelete(h.maGioThucTapSinhVien)}>Xoá</button>
+                                      {/* Updated handleDelete call to use openDeleteHourModal */}
+                                      <button onClick={() => openDeleteHourModal(h)}>Xoá</button>
                                     </>}
                               </td>
                             </tr>
@@ -338,8 +397,8 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
                       <ul className="file-list">
                         {hsbd.length
                           ? hsbd.map(f =>
-                              <li key={f.id} onClick={() => preview(f.id, false)}>{f.name}</li>
-                            )
+                            <li key={f.id} onClick={() => preview(f.id, false)}>{f.name}</li>
+                          )
                           : <li>Chưa nộp hồ sơ ĐK</li>
                         }
                       </ul>
@@ -348,8 +407,8 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
                       <ul className="file-list">
                         {hskt.length
                           ? hskt.map(f =>
-                              <li key={f.id} onClick={() => preview(f.id, true)}>{f.name}</li>
-                            )
+                            <li key={f.id} onClick={() => preview(f.id, true)}>{f.name}</li>
+                          )
                           : <li>Chưa nộp hồ sơ KT</li>
                         }
                       </ul>
@@ -373,6 +432,44 @@ const maDonViThucTapUser = Number(localStorage.getItem("maDonViThucTap")); // é
             />
           </div>
         </div>
+      )}
+
+      {/* Modal xác nhận xoá sinh viên */}
+      {showConfirmDeleteModal && studentToDelete && (
+        <div className="modal-overlay" onClick={() => setShowConfirmDeleteModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Xác nhận xoá sinh viên</h3>
+            <p>Bạn có chắc chắn muốn **xoá sinh viên** **{studentToDelete.mssv}** khỏi danh sách thực tập?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDeleteStudent} className="btn-confirm-delete">Xác nhận xoá</button>
+              <button onClick={() => setShowConfirmDeleteModal(false)} className="btn-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal xác nhận xoá giờ thực tập */}
+      {showConfirmDeleteHourModal && hourToDelete && (
+        <div className="modal-overlay" onClick={() => setShowConfirmDeleteHourModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Xác nhận xoá giờ thực tập</h3>
+            <p>Bạn có chắc chắn muốn **xoá giờ thực tập** của sinh viên **{hourToDelete.mssv}** cho tháng **{hourToDelete.thang}**?</p>
+            <div className="modal-actions">
+              <button onClick={confirmDeleteHour} className="btn-confirm-delete">Xác nhận xoá</button>
+              <button onClick={() => setShowConfirmDeleteHourModal(false)} className="btn-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Card */}
+      {showNotification && (
+        <NotificationCard
+          type={notificationType}
+          message={notificationMessage}
+          subText={notificationSubText}
+          onClose={() => setShowNotification(false)}
+        />
       )}
     </div>
   );

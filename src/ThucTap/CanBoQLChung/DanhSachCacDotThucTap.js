@@ -3,6 +3,9 @@ import axios from 'axios';
 import './DanhSachCacDotThucTap.css';
 import { useNavigate } from 'react-router-dom';
 
+// Assuming you have a NotificationCard component
+import NotificationCard from '../../DangNhap/ThongBaoHeThong'; // Create this file
+
 const internshipTypes = [
   { id: 1, label: 'Thực tập sớm' },
   { id: 2, label: 'Thực tập đúng đợt' },
@@ -26,6 +29,17 @@ const DanhSachCacDotThucTap = () => {
   const [donViTrongDot, setDonViTrongDot] = useState([]);
   const [showDonViModal, setShowDonViModal] = useState(false);
 
+  // State for delete confirmation modal
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
+  const [dotToDelete, setDotToDelete] = useState(null);
+  const [deleteAllExpiredConfirm, setDeleteAllExpiredConfirm] = useState(false); // To distinguish between single and bulk delete
+
+  // State for Notification Card
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState(''); // 'success' or 'error'
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationSubText, setNotificationSubText] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,12 +53,23 @@ const DanhSachCacDotThucTap = () => {
         setDotThucTapList(dataWithType);
       } catch (err) {
         console.error('Lỗi khi tải đợt thực tập:', err);
+        showNotificationCard('error', 'Lỗi tải dữ liệu', 'Không thể tải danh sách đợt thực tập.');
       }
     };
     fetchDots();
   }, []);
 
   const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('vi-VN');
+
+  const showNotificationCard = (type, message, subText = '') => {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setNotificationSubText(subText);
+    setShowNotification(true);
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000); // Hide after 3 seconds
+  };
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -77,8 +102,10 @@ const DanhSachCacDotThucTap = () => {
         maLoaiThucTap: internshipTypes[0].id
       });
       setShowAddForm(false);
+      showNotificationCard('success', 'Thêm thành công', 'Đợt thực tập đã được thêm mới.');
     } catch (err) {
       console.error('Lỗi khi thêm đợt thực tập:', err);
+      showNotificationCard('error', 'Thêm thất bại', 'Có lỗi xảy ra khi thêm đợt thực tập.');
     }
   };
 
@@ -93,6 +120,7 @@ const DanhSachCacDotThucTap = () => {
       setAvailableDonVi(resAllDV.data);
     } catch (err) {
       console.error('Lỗi khi lấy đơn vị:', err);
+      showNotificationCard('error', 'Lỗi tải đơn vị', 'Không thể tải thông tin đơn vị thực tập.');
     }
   };
 
@@ -113,32 +141,45 @@ const DanhSachCacDotThucTap = () => {
         prev.map(dot =>
           dot.maDotThucTap === selectedDot.maDotThucTap
             ? {
-                ...dot,
-                tenDotThucTap: payload.TenDotThucTap,
-                ngayBatDau: payload.NgayBatDau,
-                soThang: payload.SoThang,
-                doiTuongDangKy: payload.DoiTuongDangKy,
-                moTa: payload.MoTa,
-                maLoaiThucTap: payload.MaLoaiThucTap,
-                tenLoaiThucTap: internshipTypes.find(t => t.id === payload.MaLoaiThucTap)?.label
-              }
+              ...dot,
+              tenDotThucTap: payload.TenDotThucTap,
+              ngayBatDau: payload.NgayBatDau,
+              soThang: payload.SoThang,
+              doiTuongDangKy: payload.DoiTuongDangKy,
+              moTa: payload.MoTa,
+              maLoaiThucTap: payload.MaLoaiThucTap,
+              tenLoaiThucTap: internshipTypes.find(t => t.id === payload.MaLoaiThucTap)?.label
+            }
             : dot
         )
       );
       setSelectedDot(null);
+      showNotificationCard('success', 'Cập nhật thành công', 'Thông tin đợt thực tập đã được cập nhật.');
     } catch (err) {
       console.error('Lỗi khi cập nhật:', err);
+      showNotificationCard('error', 'Cập nhật thất bại', 'Có lỗi xảy ra khi cập nhật đợt thực tập.');
     }
   };
 
-  const handleDeleteDot = async id => {
-    if (!window.confirm('Bạn có chắc chắn muốn xoá đợt thực tập này không?')) return;
+  const handleDeleteDot = async (id) => {
+    setDotToDelete(dotThucTapList.find(dot => dot.maDotThucTap === id));
+    setDeleteAllExpiredConfirm(false); // Ensure this is false for single delete
+    setShowDeleteConfirmModal(true);
+  };
+
+  const confirmDeleteDot = async () => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DotThucTap/delete/${id}`);
-      setDotThucTapList(prev => prev.filter(dot => dot.maDotThucTap !== id));
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/DotThucTap/delete/${dotToDelete.maDotThucTap}`);
+      setDotThucTapList(prev => prev.filter(dot => dot.maDotThucTap !== dotToDelete.maDotThucTap));
       setSelectedDot(null);
+      setShowDeleteConfirmModal(false);
+      showNotificationCard('success', 'Xóa thành công', `Đợt thực tập "${dotToDelete.tenDotThucTap}" đã được xóa.`);
+      setDotToDelete(null);
     } catch (err) {
       console.error('Lỗi khi xoá:', err);
+      showNotificationCard('error', 'Xóa thất bại', 'Không thể xóa đợt thực tập.');
+      setShowDeleteConfirmModal(false);
+      setDotToDelete(null);
     }
   };
 
@@ -149,18 +190,67 @@ const DanhSachCacDotThucTap = () => {
         await axios.delete(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/delete-1Madotdonvi${selectedDot.maDotThucTap}`, {
           params: { maDonViThucTap: dvId }
         });
+        showNotificationCard('success', 'Gỡ đơn vị thành công', 'Đơn vị đã được gỡ khỏi đợt thực tập.');
       } else {
         await axios.post(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot`, {
           maDotThucTap: selectedDot.maDotThucTap,
           maDonViThucTaps: [dvId]
         });
+        showNotificationCard('success', 'Thêm đơn vị thành công', 'Đơn vị đã được thêm vào đợt thực tập.');
       }
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/${selectedDot.maDotThucTap}`);
       setDonViTrongDot(res.data);
     } catch (err) {
       console.error('Lỗi toggle đơn vị:', err);
+      showNotificationCard('error', 'Thao tác thất bại', 'Không thể cập nhật đơn vị thực tập.');
     }
   };
+
+  // Tách đợt thực tập thành còn hạn và hết hạn
+  const dotConHan = dotThucTapList.filter(dot => {
+    const ngayBatDau = new Date(dot.ngayBatDau);
+    const now = new Date();
+    const diffDays = Math.floor((now - ngayBatDau) / (1000 * 60 * 60 * 24));
+    return diffDays <= 15;
+  });
+
+  const dotHetHan = dotThucTapList.filter(dot => {
+    const ngayBatDau = new Date(dot.ngayBatDau);
+    const now = new Date();
+    const diffDays = Math.floor((now - ngayBatDau) / (1000 * 60 * 60 * 24));
+    return diffDays > 15;
+  });
+
+
+  const handleDeleteAllExpiredDots = async () => {
+    setDeleteAllExpiredConfirm(true);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const confirmDeleteAllExpiredDots = async () => {
+    try {
+      await Promise.all(
+        dotHetHan.map(dot =>
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/DotThucTap/delete/${dot.maDotThucTap}`)
+        )
+      );
+      setDotThucTapList(prev => prev.filter(dot => {
+        const ngayBatDau = new Date(dot.ngayBatDau);
+        const now = new Date();
+        const diffDays = Math.floor((now - ngayBatDau) / (1000 * 60 * 60 * 24));
+        return diffDays <= 15;
+      }));
+      setShowDeleteConfirmModal(false);
+      setDeleteAllExpiredConfirm(false);
+      showNotificationCard('success', 'Xóa thành công', 'Tất cả các đợt thực tập hết hạn đã được xóa.');
+    } catch (err) {
+      console.error('Lỗi khi xoá hàng loạt đợt hết hạn:', err);
+      showNotificationCard('error', 'Xóa thất bại', 'Không thể xóa tất cả các đợt hết hạn.');
+      setShowDeleteConfirmModal(false);
+      setDeleteAllExpiredConfirm(false);
+    }
+  };
+
 
   return (
     <>
@@ -222,6 +312,40 @@ const DanhSachCacDotThucTap = () => {
         </div>
       )}
 
+      {/* Modal xác nhận xóa */}
+      {showDeleteConfirmModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirmModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <h3>Xác nhận xóa</h3>
+            {deleteAllExpiredConfirm ? (
+              <p>Bạn có chắc chắn muốn xóa **TẤT CẢ** các đợt thực tập đã hết hạn không?</p>
+            ) : (
+              <p>Bạn có chắc chắn muốn xóa đợt thực tập **{dotToDelete?.tenDotThucTap}** không?</p>
+            )}
+
+            <div className="modal-actions">
+              <button
+                onClick={deleteAllExpiredConfirm ? confirmDeleteAllExpiredDots : confirmDeleteDot}
+                className="btn-confirm-delete"
+              >
+                Xác nhận xóa
+              </button>
+              <button onClick={() => setShowDeleteConfirmModal(false)} className="btn-cancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Card */}
+      {showNotification && (
+        <NotificationCard
+          type={notificationType}
+          message={notificationMessage}
+          subText={notificationSubText}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
+
       {/* Giao diện chính */}
       <div className="dot-container">
         <h2>DANH SÁCH CÁC ĐỢT THỰC TẬP</h2>
@@ -251,25 +375,54 @@ const DanhSachCacDotThucTap = () => {
           </div>
         )}
 
-        <div className="dot-card-list">
-          {dotThucTapList.map(dot => (
-            <div
-              key={dot.maDotThucTap}
-              className={`dot-card ${
-                dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
-                dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
-                dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' :
-                dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' : ''
-              }`}
-              onClick={() => handleCardClick(dot)}
-            >
-              <h3>{dot.tenDotThucTap}</h3>
-              <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
-              <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
-              <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
-              <p><strong>Mô tả:</strong> {dot.moTa}</p>
-            </div>
-          ))}
+        <div className="dot-card-section">
+          <h3>🟢 ĐỢT THỰC TẬP CÒN HẠN:</h3>
+          <div className="dot-card-list">
+            {dotConHan.map(dot => (
+              <div
+                key={dot.maDotThucTap}
+                className={`dot-card ${
+                  dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
+                  dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
+                  dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' :
+                  dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' : ''
+                }`}
+                onClick={() => handleCardClick(dot)}
+              >
+                <h3>{dot.tenDotThucTap}</h3>
+                <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
+                <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
+                <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
+                <p><strong>Mô tả:</strong> {dot.moTa}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="expired-header">
+            <h3>🔴 ĐỢT THỰC TẬP HẾT HẠN:</h3>
+            <button className="delete-all-btn" onClick={handleDeleteAllExpiredDots}>🗑 Xóa tất cả các đợt hết hạn</button>
+          </div>
+
+          <div className="dot-card-list">
+            {dotHetHan.map(dot => (
+              <div
+                key={dot.maDotThucTap}
+                className={`dot-card ${
+                  dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
+                  dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
+                  dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' :
+                  dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' : ''
+                }`}
+                onClick={() => handleCardClick(dot)}
+              >
+                <h3>{dot.tenDotThucTap}</h3>
+                <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
+                <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
+                <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
+                <p><strong>Mô tả:</strong> {dot.moTa}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>

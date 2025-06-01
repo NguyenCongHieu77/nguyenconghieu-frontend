@@ -465,3 +465,6 @@ button[type="submit"]:hover {
   border-radius: 8px;
   margin-top: 8px;
 }
+.already-registered {
+text-align: center;
+}

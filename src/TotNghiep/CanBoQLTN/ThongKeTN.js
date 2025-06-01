@@ -25,6 +25,8 @@ const ThongKeTN = () => {
   const [data, setData] = useState([]);
   const [chartDataTrangThai, setChartDataTrangThai] = useState(null);
   const [chartDataKetQua, setChartDataKetQua] = useState(null);
+  const [chartDataDot, setChartDataDot] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,6 +80,35 @@ const ThongKeTN = () => {
       ],
     });
 
+    // Biểu đồ 3: Thống kê số lượng sinh viên theo từng đợt (maDotDKTN)
+const dotCounts = {};
+
+data.forEach((item) => {
+  const maDot = item.maDotDKTN;
+  const tenDot = item.tenDotDKTN;
+
+  if (!dotCounts[maDot]) {
+    dotCounts[maDot] = { count: 0, tenDot: tenDot };
+  }
+
+  dotCounts[maDot].count++;
+});
+
+const labelsDot = Object.values(dotCounts).map((item) => item.tenDot);
+const dataDot = Object.values(dotCounts).map((item) => item.count);
+
+setChartDataDot({
+  labels: labelsDot,
+  datasets: [
+    {
+      label: 'Số lượng sinh viên',
+      data: dataDot,
+      backgroundColor: '#673AB7',
+    },
+  ],
+});
+
+
     // Biểu đồ 2: Kết quả tốt nghiệp cho sinh viên đủ điều kiện báo cáo
     const ketQuaCounts = {
       'Đạt': 0,
@@ -107,11 +138,39 @@ const ThongKeTN = () => {
     });
   }, [data]);
 
-  if (!chartDataTrangThai || !chartDataKetQua)
-    return <div>Đang tải dữ liệu...</div>;
+  if (!chartDataTrangThai || !chartDataKetQua || !chartDataDot)
+  return <div>Đang tải dữ liệu...</div>;
+
 
   return (
     <>
+
+{/* Biểu đồ 3: Thống kê theo đợt */}
+<div className="thongke-container">
+  <h2 style={{ textAlign: 'center' }}>THỐNG KÊ SỐ LƯỢNG SINH VIÊN THEO ĐỢT ĐĂNG KÝ TỐT NGHIỆP</h2>
+  <div className="chart-item">
+    <Bar
+      data={chartDataDot}
+      options={{
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Biểu đồ số lượng sinh viên theo từng đợt',
+          },
+          legend: {
+            display: false,
+          },
+        },
+      }}
+    />
+    <p style={{ textAlign: 'center', fontWeight: 'bold' }}>
+      TỔNG: {tinhTong(chartDataDot.datasets[0].data)} SINH VIÊN
+    </p>
+  </div>
+</div>
+
       {/* Biểu đồ 1: Tình trạng báo cáo */}
       <div className="thongke-container">
         <h2 style={{ textAlign: 'center' }}>THỐNG KÊ ĐIỀU KIỆN BÁO CÁO TỐT NGHIỆP</h2>
@@ -137,6 +196,9 @@ const ThongKeTN = () => {
           </p>
         </div>
       </div>
+
+      
+
 
       {/* Biểu đồ 2: Kết quả tốt nghiệp */}
       <div className="thongke-container">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './DangKyThucTap.css';
 import { useNavigate } from 'react-router-dom';
+import NotificationCard from '../../DangNhap/ThongBaoHeThong'; // Import the NotificationCard component
 
 const DangKyThucTap = () => {
   const savedUsername = localStorage.getItem('username') || '';
@@ -34,6 +35,13 @@ const DangKyThucTap = () => {
     ghiChu: 'Đăng ký thành công, vui lòng nộp Hồ Sơ Thực Tập',
   });
 
+  // States for NotificationCard
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState('info');
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationSubText, setNotificationSubText] = useState('');
+
+
   const navigate = useNavigate();
 
   const addMonths = (dateStr, months) => {
@@ -46,6 +54,14 @@ const DangKyThucTap = () => {
 
   const formatDate = d => d ? new Date(d).toLocaleDateString('vi-VN') : '';
   const safe = val => (val === null || val === undefined ? '' : typeof val === 'object' ? JSON.stringify(val) : val);
+
+  // Function to display notification card
+  const showNotificationCard = (type, message, subText = '') => {
+    setNotificationType(type);
+    setNotificationMessage(message);
+    setNotificationSubText(subText);
+    setShowNotification(true);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,6 +87,7 @@ const DangKyThucTap = () => {
         setHasRegistered(dktRes.data.some(item => item.mssv === savedUsername));
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
+        showNotificationCard('error', 'Lỗi tải dữ liệu', 'Không thể tải thông tin đợt thực tập.');
       }
     };
 
@@ -109,7 +126,10 @@ const DangKyThucTap = () => {
 
     axios.get(`${process.env.REACT_APP_API_URL}/api/DonViThucTapTheoDot/${dot.maDotThucTap}`)
       .then(res => setDonViList(res.data))
-      .catch(console.error);
+      .catch(err => {
+        console.error("Lỗi tải đơn vị thực tập theo đợt:", err);
+        showNotificationCard('error', 'Lỗi', 'Không thể tải danh sách đơn vị thực tập cho đợt này.');
+      });
   };
 
   const handleChange = e => {
@@ -134,7 +154,10 @@ const DangKyThucTap = () => {
         const donVi = res.data.find(dv => dv.maDonViThucTap === id);
         setSelectedDonVi(donVi || null);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error("Lỗi tải thông tin đơn vị:", err);
+        showNotificationCard('error', 'Lỗi', 'Không thể tải thông tin đơn vị thực tập.');
+      });
   };
 
   const handleSubmit = async e => {
@@ -144,12 +167,21 @@ const DangKyThucTap = () => {
         `${process.env.REACT_APP_API_URL}/api/ChiTietThucTap/insert-update`,
         formData
       );
-      alert(res.data.message);
+      showNotificationCard('success', 'Đăng ký thành công!', res.data.message);
       setHasRegistered(true);
     } catch (err) {
-      alert(err.response?.data?.message || 'Đăng ký thất bại!');
+      showNotificationCard('error', 'Đăng ký thất bại!', err.response?.data?.message || 'Có lỗi xảy ra khi đăng ký.');
+      console.error('Lỗi đăng ký:', err);
     }
   };
+
+  const now = new Date();
+  const fifteenDaysAgo = new Date(now);
+  fifteenDaysAgo.setDate(now.getDate() - 15);
+
+  const availableDots = filtered.filter(dot => new Date(dot.ngayBatDau) >= fifteenDaysAgo);
+  const expiredDots = filtered.filter(dot => new Date(dot.ngayBatDau) < fifteenDaysAgo);
+
 
   return (
     <div className="dot-container">
@@ -181,32 +213,12 @@ const DangKyThucTap = () => {
         </select>
       </div>
 
-      <div className="dot-card-list">
-        {filtered.map(dot => (
-          <div
-            key={dot.maDotThucTap}
-            className={`dot-card ${
-              dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
-              dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
-              dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' :
-              dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' : ''
-            }`}
-            onClick={() => handleCardClick(dot)}
-          >
-            <h3>{dot.tenDotThucTap}</h3>
-            <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
-            <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
-            <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
-            <p><strong>Mô tả:</strong> {dot.moTa}</p>
-          </div>
-        ))}
-      </div>
-
       {selectedDot && (
         <div className="registration-section">
           {hasRegistered ? (
             <div className="already-registered">
-              <h2>Bạn đã đăng ký rồi nên không thể đăng ký lại.</h2>
+              <h2>Bạn đã đăng ký rồi, không thể đăng ký lại!</h2>
+              <p>Bạn đã đăng ký đợt thực tập. Vui lòng kiểm tra lại thông tin chi tiết hoặc liên hệ cán bộ quản lý nếu có thắc mắc.</p>
             </div>
           ) : (
             <form className="registration-form" onSubmit={handleSubmit}>
@@ -253,15 +265,15 @@ const DangKyThucTap = () => {
               )}
 
               {false && (
-  <label>Giảng viên hướng dẫn:
-    <select name="maGiaoVien" value={formData.maGiaoVien} onChange={handleChange} required>
-      <option value="">_Chưa có giáo viên</option>
-      {giangVienList.map(gv => (
-        <option key={gv.maGiaoVien} value={gv.maGiaoVien}>{gv.hoTenGiaoVien}</option>
-      ))}
-    </select>
-  </label>
-)}
+                <label>Giảng viên hướng dẫn:
+                  <select name="maGiaoVien" value={formData.maGiaoVien} onChange={handleChange} required>
+                    <option value="">_Chưa có giáo viên</option>
+                    {giangVienList.map(gv => (
+                      <option key={gv.maGiaoVien} value={gv.maGiaoVien}>{gv.hoTenGiaoVien}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
 
 
               <div className="form-buttons">
@@ -275,6 +287,58 @@ const DangKyThucTap = () => {
             </form>
           )}
         </div>
+      )}
+
+
+      <h3>🟢 ĐỢT THỰC TẬP CÒN HẠN:</h3>
+      <div className="dot-card-list">
+        {availableDots.length > 0 ? availableDots.map(dot => (
+          <div
+            key={dot.maDotThucTap}
+            className={`dot-card ${dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
+              dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
+                dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' :
+                  dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' : ''}`}
+            onClick={() => handleCardClick(dot)}
+          >
+            <h3>{dot.tenDotThucTap}</h3>
+            <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
+            <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
+            <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
+            <p><strong>Mô tả:</strong> {dot.moTa}</p>
+          </div>
+        )) : <p>Không có đợt nào còn hạn.</p>}
+      </div>
+
+      <h3>🔴 ĐỢT THỰC TẬP HẾT HẠN:</h3>
+      <div className="dot-card-list expired">
+        {expiredDots.length > 0 ? expiredDots.map(dot => (
+          <div
+            key={dot.maDotThucTap}
+            className={`dot-card expired-card ${dot.tenLoaiThucTap === 'Thực tập sớm' ? 'sinhvien-som' :
+              dot.tenLoaiThucTap === 'Thực tập đúng đợt' ? 'sinhvien-dungdot' :
+                dot.tenLoaiThucTap === 'Thực tập liên thông' ? 'sinhvien-lienthong' :
+                  dot.tenLoaiThucTap === 'Thực tập lại' ? 'sinhvien-lai' : ''}`}
+            style={{ opacity: 0.5, pointerEvents: 'none' }}
+          >
+            <h3>{dot.tenDotThucTap}</h3>
+            <p><strong>Ngày bắt đầu:</strong> {formatDate(dot.ngayBatDau)}</p>
+            <p><strong>Đối tượng:</strong> {dot.doiTuongDangKy}</p>
+            <p><strong>Loại:</strong> {dot.tenLoaiThucTap}</p>
+            <p><strong>Mô tả:</strong> {dot.moTa}</p>
+            <p style={{ color: 'red' }}><strong>Hết hạn đăng ký</strong></p>
+          </div>
+        )) : <p>Không có đợt nào hết hạn.</p>}
+      </div>
+
+      {/* Notification Card */}
+      {showNotification && (
+        <NotificationCard
+          type={notificationType}
+          message={notificationMessage}
+          subText={notificationSubText}
+          onClose={() => setShowNotification(false)}
+        />
       )}
     </div>
   );

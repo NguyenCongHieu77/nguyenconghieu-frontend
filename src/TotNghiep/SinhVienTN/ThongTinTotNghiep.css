@@ -1,7 +1,7 @@
 /* ThongTinTotNghiep.css */
 
 .thong-tin-tot-nghiep-card {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 2rem auto;
   padding: 1.5rem;
   border: 1px solid #ddd;
@@ -156,7 +156,7 @@
 /* Card chính */
 .thong-tin-tot-nghiep-card {
   width: 100%;
-  max-width: 600px;
+  max-width: 1000px;
   margin: 1rem auto;
   padding: 1.5rem;
   background: #fff;
@@ -320,7 +320,7 @@
 /* Khung ngoài của phần chi tiết */
 .chi-tiet-below-card {
   width: 100%;                /* full container width */
-  max-width: 900px;           /* mở rộng tối đa */
+  max-width: 1100px;           /* mở rộng tối đa */
   margin: 1.5rem auto;        /* căn giữa với khoảng cách trên/dưới */
   padding: 1rem;              /* thêm khoảng đệm */
 }
@@ -368,4 +368,13 @@
   grid-column: 1 / -1;        /* kéo dài hết chiều ngang grid */
   padding: 1.25rem;
   margin-top: 1.5rem;
+}
+.status-true {
+  color: #007b00;
+  font-weight: bold;
+}
+
+.status-false {
+  color: #c00000;
+  font-weight: bold;
 }

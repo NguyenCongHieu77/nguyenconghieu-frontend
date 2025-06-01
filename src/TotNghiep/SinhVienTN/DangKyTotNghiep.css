@@ -259,7 +259,7 @@
 }
 
 .dktn-dot-card {
-  background: #fff;
+  background: #d3fadc;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 10px;
@@ -310,7 +310,7 @@
 .dktn-reg-form {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #dddddd;
   border-radius: 8px;
   background: #fafafa;
 }
@@ -369,7 +369,7 @@
 .dktn-dot-card {
   min-height: 160px;
   /* giữ nguyên những thuộc tính khác */
-  background: #fff;
+  /* background: #fff; */
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 10px;
@@ -380,10 +380,12 @@
 }
 .dktn-field select {
   width: 100%;
-  max-width: 500px; /* Bạn có thể chỉnh sửa giá trị này tùy theo thiết kế */
   padding: 6px;
   font-size: 16px;
   border-radius: 6px;
   border: 1px solid #ccc;
   box-sizing: border-box;
+}
+.dktn-dot-card.available {
+  background-color: #cafcd0; /* màu xanh nhạt */
 }

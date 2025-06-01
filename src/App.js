@@ -20,11 +20,11 @@ import DangKyThucTap from "./ThucTap/SinhVien/DangKyThucTap";
 import ThongTinThucTap from "./ThucTap/SinhVien/ThongTinThucTap";
 
 
-import DanhSachSVDangKy from "./ThucTap/CanBoQLCLB/DanhSachSVDangKy";
+import DanhSachSVDangKy from "./ThucTap/CanBoQLCLB/LichDangKyTT";
 import DanhSachSVDangThucTap from "./ThucTap/CanBoQLCLB/DanhSachSVDangThucTap";
 
 import DanhSachCacDonViThucTap from "./ThucTap/CanBoQLChung/DanhSachCacDonViThucTap";
-import DanhSachSVDuocXacNhanTuCLB from "./ThucTap/CanBoQLChung/DanhSachSVDuocXacNhanTuCLB";
+import DanhSachSVDuocXacNhanTuCLB from "./ThucTap/CanBoQLChung/DanhSachSVGuiDangKyTT";
 import DanhSachSVHienDangThucTap from "./ThucTap/CanBoQLChung/DanhSachSVHienDangThucTap";
 import DanhSachSVDuocBaoCao from "./ThucTap/CanBoQLChung/DanhSachSVDuocBaoCao";
 import DanhSachCacDotThucTap from "./ThucTap/CanBoQLChung/DanhSachCacDotThucTap";
@@ -35,9 +35,11 @@ import DangKyTotNghiep from "./TotNghiep/SinhVienTN/DangKyTotNghiep";
 import ThongTinTotNghiep from "./TotNghiep/SinhVienTN/ThongTinTotNghiep";
 
 import DanhSachSVDangKyTN from "./TotNghiep/CanBoQLTN/DanhSachSVDangKyTN";
-import DanhSachSVDuocXacNhan from "./TotNghiep/CanBoQLTN/DanhSachSVDuocXacNhan";
+import DanhSachSVXacNhan from "./TotNghiep/CanBoQLTN/DanhSachSVXacNhan";
+import DanhSachSVDuocXacNhan from "./TotNghiep/CanBoQLTN/DanhSachSVDuocXacNhanBaoCao";
 import CacDotTotNghiep from "./TotNghiep/CanBoQLTN/CacDotTotNghiep";
 import ThongKeTN from "./TotNghiep/CanBoQLTN/ThongKeTN";
+
 
 
 function App() {
@@ -87,6 +89,7 @@ function App() {
         {/* Layout Quản Lý Tốt Nghiệp */}
         <Route path="/layout-ql-tn" element={<LayoutQLTN />}>
           <Route path="danh-sach-sv-dk-tn" element={<DanhSachSVDangKyTN />} />
+          <Route path="danh-sach-sv-xn" element={<DanhSachSVXacNhan />}/>
           <Route path="danh-sach-sv-duoc-xn" element={<DanhSachSVDuocXacNhan />} />
           <Route path="cac-dot-tot-nghiep" element={<CacDotTotNghiep />} />
           <Route path="thong-ke-tn" element={<ThongKeTN/>}/>

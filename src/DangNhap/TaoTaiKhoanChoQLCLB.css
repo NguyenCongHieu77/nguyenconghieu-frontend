@@ -1,53 +1,337 @@
-/* TaoTaiKhoanChoQLCLB.css */
+/* Styling chung */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #eef1f5; /* Nền tổng thể nhẹ nhàng */
+  color: #333;
+}
 
 .taotaikhoanqlclb-container {
-  max-width: 450px;
-  margin: 40px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-}
-.taotaikhoanqlclb-form {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  min-height: 100vh;
+  gap: 30px; /* Khoảng cách giữa các phần chính (tạo form, danh sách) */
 }
+
+/* Styling cho các khối chính (form tạo, danh sách, modal) */
+.taotaikhoanqlclb-form,
+.account-list-section,
+.edit-account-modal-content {
+  background-color: #ffffff;
+  padding: 35px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 550px; /* Đặt max-width cho form tạo và danh sách */
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Tiêu đề chung cho các phần */
 .taotaikhoanqlclb-title {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  color: #2c3e50; /* Màu tiêu đề đậm hơn */
+  margin-bottom: 30px;
+  font-size: 2em;
+  font-weight: 700;
+  border-bottom: 2px solid #3498db; /* Đường gạch dưới màu xanh */
+  padding-bottom: 10px;
+  display: inline-block; /* Để đường gạch dưới chỉ bao quanh chữ */
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content; /* Chiều rộng vừa với nội dung */
 }
+
+/* Grouping của label và input/select */
+.form-group {
+    margin-bottom: 25px; /* Khoảng cách dưới mỗi nhóm label-input/select */
+    width: 100%; /* Đảm bảo chiếm đủ không gian */
+}
+
 .taotaikhoanqlclb-label {
-  margin: 8px 0 4px;
-  font-weight: 500;
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.95em;
 }
+
 .taotaikhoanqlclb-input,
 .taotaikhoanqlclb-select {
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 100%; /* Chiếm 100% của form-group */
+  padding: 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1em;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.taotaikhoanqlclb-select {
-  appearance: none;
+
+.taotaikhoanqlclb-input:focus,
+.taotaikhoanqlclb-select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
 }
+
 .taotaikhoanqlclb-button {
-  margin-top: 16px;
-  padding: 10px;
-  font-size: 1rem;
+  width: 100%;
+  padding: 14px 25px;
+  background-color: #3498db;
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1.15em;
   cursor: pointer;
-  background-color: #007bff;
-  color: #fff;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  font-weight: 600;
 }
+
+.taotaikhoanqlclb-button:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
 .taotaikhoanqlclb-button:disabled {
-  opacity: 0.6;
+  background-color: #aeb6bf;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
+
 .taotaikhoanqlclb-message {
-  margin-top: 12px;
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 8px;
   text-align: center;
-  font-size: 0.95rem;
-  color: #28a745;
+  font-weight: bold;
+  font-size: 1em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.taotaikhoanqlclb-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.taotaikhoanqlclb-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Đường phân cách giữa các phần */
+.divider {
+  width: 80%;
+  max-width: 600px; /* Giữ cho đường phân cách không quá dài */
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  margin: 50px 0; /* Khoảng cách lớn hơn */
+}
+
+/* --- Danh sách Tài khoản Styling --- */
+.account-list-section {
+  max-width: 900px; /* Bảng rộng hơn */
+  padding: 35px;
+}
+
+.table-responsive {
+  overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+  font-size: 0.95em;
+}
+
+.accounts-table th,
+.accounts-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.accounts-table th {
+  background-color: #ecf0f1;
+  font-weight: 700;
+  color: #2c3e50;
+  text-transform: uppercase;
+}
+
+.accounts-table tr:nth-child(even) {
+  background-color: #f9fbfd;
+}
+
+.accounts-table tr:hover {
+  background-color: #eef7ff;
+}
+
+.taotaikhoanqlclb-edit-button {
+  padding: 8px 15px;
+  background-color: #2ecc71; /* Màu xanh lá cây đẹp */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-weight: 500;
+}
+
+.taotaikhoanqlclb-edit-button:hover {
+  background-color: #27ae60;
+  transform: translateY(-1px);
+}
+
+.no-accounts-message {
+    text-align: center;
+    color: #666;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+/* --- Modal chỉnh sửa Tài khoản Styling --- */
+.edit-account-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+.edit-account-modal-content {
+  max-width: 700px; /* Tăng max-width để form 2 cột có đủ không gian */
+  /* padding, border-radius, box-shadow đã được định nghĩa ở .taotaikhoanqlclb-form */
+  /* Reset margin-bottom vì nó không phải là phần tử đứng riêng nữa */
+  margin-bottom: 0;
+  position: relative; /* Quan trọng để định vị nút đóng */
+  animation: slideInFromTop 0.4s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.edit-account-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 2em;
+  color: #888;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-account-modal-close:hover {
+  color: #333;
+  transform: scale(1.1);
+}
+
+.edit-account-modal-content .taotaikhoanqlclb-title {
+    margin-top: 0; /* Bỏ margin-top mặc định của title để căn chỉnh đẹp hơn trong modal */
+    margin-bottom: 30px;
+}
+
+/* Bố cục Grid cho form chỉnh sửa */
+.edit-account-modal-content form {
+    width: 100%; /* Form chiếm toàn bộ chiều rộng của modal content */
+}
+
+.edit-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia thành 2 cột đều nhau */
+    gap: 20px 30px; /* Khoảng cách giữa các hàng và cột */
+    margin-bottom: 10px; /* Khoảng cách với phần tử dưới các trường grid */
+}
+
+/* Đảm bảo trường "Đơn vị thực tập" chiếm 100% chiều rộng trong grid */
+.form-group.full-width {
+    grid-column: 1 / -1; /* Chiếm từ cột đầu đến cột cuối */
+}
+
+.edit-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.edit-form-buttons button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.05em;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-form-buttons button[type="submit"] {
+  background-color: #3498db;
+  color: white;
+}
+
+.edit-form-buttons button[type="submit"]:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+.edit-form-buttons button[type="button"] {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.edit-form-buttons button[type="button"]:hover {
+  background-color: #7f8c8d;
+  transform: translateY(-1px);
+}
+
+/* Media Queries cho màn hình nhỏ hơn */
+@media (max-width: 768px) {
+  .taotaikhoanqlclb-form,
+  .account-list-section,
+  .edit-account-modal-content {
+    padding: 25px; /* Giảm padding tổng thể */
+  }
+
+  .taotaikhoanqlclb-title {
+    font-size: 1.6em; /* Giảm kích thước tiêu đề */
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px; /* Giảm khoảng cách giữa các nhóm */
+  }
+
+  .edit-form-grid {
+    grid-template-columns: 1fr; /* Chuyển thành 1 cột trên màn hình nhỏ */
+    gap: 15px; /* Giảm khoảng cách */
+  }
+
+  .taotaikhoanqlclb-button,
+  .edit-form-buttons button {
+    padding: 12px 15px; /* Giảm padding nút */
+    font-size: 1em;
+  }
+
+  .edit-account-modal-close {
+    top: 10px;
+    right: 15px;
+    font-size: 1.8em;
+  }
 }
