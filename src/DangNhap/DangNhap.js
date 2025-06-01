@@ -200,50 +200,40 @@
 // export default DangNhap;
 
 
-
 import React, { useState } from 'react';
-import axios from 'axios';           // baseURL + withCredentials đã config
-import CryptoJS from 'crypto-js';
+import axios from 'axios';           // sẽ dùng baseURL
 import { useNavigate } from 'react-router-dom';
 import './DangNhap.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const DangNhap = () => {
-  const [tenTaiKhoan, setTenTaiKhoan]     = useState('');
-  const [matKhau, setMatKhau]             = useState('');
-  const [showPassword, setShowPassword]   = useState(false);
-  const [error, setError]                 = useState('');
-  const [loading, setLoading]             = useState(false);
+  const [tenTaiKhoan, setTenTaiKhoan] = useState('');
+  const [matKhau, setMatKhau]         = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
-      // 1) Hash mật khẩu SHA-512 (kết quả hex)
-const wordArray = CryptoJS.enc.Utf16LE.parse(matKhau);
-const hashedPwd  = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
+      // <-- CHỈ ĐƯỜNG DẪN RELATIVE, axios tự nối với baseURL
+      const res = await axios.post('/api/Account/login', { tenTaiKhoan, matKhau });
 
-      // 2) Gửi login (browser tự nhận cookie HttpOnly)
-      const { data } = await axios.post('/api/Account/login', {
-        tenTaiKhoan,
-        matKhau: hashedPwd
-      });
+      // Swagger trả về { accessToken, maNhomTaiKhoan, tenHienThi, maDonViThucTap }
+      const { accessToken, maNhomTaiKhoan, tenHienThi,maDonViThucTap } = res.data;
 
-      // 3) Xoá mật khẩu gốc khỏi state
-      setMatKhau('');
-
-      // 4) Lưu user-info vào localStorage
-      const { maNhomTaiKhoan, tenHienThi, maDonViThucTap } = data;
-      localStorage.setItem('maNhomTaiKhoan',    maNhomTaiKhoan);
-      localStorage.setItem('tenHienThi',        tenHienThi);
-      localStorage.setItem('maDonViThucTap',    maDonViThucTap);
+      // Lưu token + user info
+      localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('username', tenTaiKhoan);
+      localStorage.setItem('maNhomTaiKhoan', maNhomTaiKhoan);
+      localStorage.setItem('tenHienThi', tenHienThi);
+      localStorage.setItem('maDonViThucTap', maDonViThucTap);
 
-      // 5) Điều hướng theo role
+      // Redirect theo role
       if (maNhomTaiKhoan === 5) {
         navigate('/layout-cbql-clb/danh-sach-sv-dang-thuc-tap');
       } else if (maNhomTaiKhoan === 3) {
@@ -254,10 +244,9 @@ const hashedPwd  = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
         setError('Quyền truy cập không hợp lệ.');
       }
     } catch (err) {
-      const msg = err.response?.data?.message;
       setError(
-        msg === 'Tên đăng nhập hoặc mật khẩu không đúng.'
-          ? msg
+        err.response?.data?.message === 'Tên đăng nhập hoặc mật khẩu không đúng.'
+          ? 'Tên đăng nhập hoặc mật khẩu không đúng.'
           : 'Đăng nhập thất bại.'
       );
     } finally {
@@ -275,7 +264,7 @@ const hashedPwd  = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
       <form className="form-side" onSubmit={handleSubmit}>
         {error && <p className="error">{error}</p>}
         <div className="input-wrapper">
-          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon icon={faUser}/>
           <input
             type="text"
             placeholder="Tên đăng nhập"
@@ -285,10 +274,10 @@ const hashedPwd  = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
           />
         </div>
         <div className="input-wrapper">
-          <FontAwesomeIcon icon={faLock} />
+          <FontAwesomeIcon icon={faLock}/>
           <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Mật khẩu"
+placeholder="Mật khẩu"
             value={matKhau}
             onChange={e => setMatKhau(e.target.value)}
             required
@@ -300,7 +289,7 @@ const hashedPwd  = CryptoJS.SHA512(wordArray).toString(CryptoJS.enc.Hex);
           />
         </div>
         <button className="login-btn" type="submit" disabled={loading}>
-          <FontAwesomeIcon icon={faLock} /> {loading ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
+          <FontAwesomeIcon icon={faLock}/> {loading ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
         </button>
       </form>
     </div>
