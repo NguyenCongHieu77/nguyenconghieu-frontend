@@ -4,6 +4,8 @@ import DangNhap from "./DangNhap/DangNhap";
 import DoiMatKhau from "./DangNhap/DoiMatKhau";
 import QuenMatKhau from "./DangNhap/QuenMatKhau";
 import TaoTaiKhoanChoQLCLB from "./DangNhap/TaoTaiKhoanChoQLCLB";
+import TaoTaiKhoanChoSV from "./DangNhap/TaoTaiKhoanChoSV";
+
 
 
 import LayoutSV from "./LayoutChung/LayoutSV";
@@ -77,6 +79,7 @@ function App() {
           <Route path="thong-ke-tt" element={<ThongkeTT />}/>
           <Route path="doi-mat-khau" element={<DoiMatKhau />} />
           <Route path="tao-tai-khoan-cho-qlclb" element={<TaoTaiKhoanChoQLCLB/>} />
+          <Route path="tao-tai-khoan-cho-sv" element={<TaoTaiKhoanChoSV/>} />
         </Route>
 
         {/* Layout Sinh Viên Đăng Ký Tốt Nghiệp */}

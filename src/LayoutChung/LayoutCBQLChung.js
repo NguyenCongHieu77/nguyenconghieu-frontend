@@ -279,6 +279,15 @@ function LayoutCBQLChung() {
                 Tạo tài khoản CLB
               </NavLink>
 
+              <NavLink
+                to="tao-tai-khoan-cho-sv"
+                className="dropdown-item"
+                onClick={closeMenus}
+              >
+                <FiUserPlus size={16} style={{ marginRight: '8px' }} />
+                Tạo tài khoản SV
+              </NavLink>
+
               <button
                 onClick={handleLogout}
                 className="dropdown-item"

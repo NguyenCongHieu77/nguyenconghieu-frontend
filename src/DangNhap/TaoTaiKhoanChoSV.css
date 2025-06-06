@@ -1,0 +1,107 @@
+/* TaoTaiKhoanChoSV.css */
+
+.htsv-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    /* max-width: 1200px; */
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.htsv-filters {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+    gap: 15px; /* Space between filter elements */
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    justify-content: center; /* Center filter controls */
+}
+
+.htsv-search-input,
+.htsv-filter-select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    flex-grow: 1; /* Allow inputs to grow and fill space */
+    min-width: 180px; /* Minimum width for each filter */
+}
+
+.htsv-search-input:focus,
+.htsv-filter-select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.htsv-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.htsv-table th,
+.htsv-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.htsv-table th {
+    background-color: #0056B3;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.htsv-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.htsv-table tbody tr:hover {
+    background-color: #e9e9e9;
+}
+
+.htsv-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+.htsv-btn-tao {
+    background-color: #28a745;
+    color: white;
+}
+
+.htsv-btn-tao:hover {
+    background-color: #218838;
+}
+
+.htsv-btn-xoa {
+    background-color: #dc3545;
+    color: white;
+}
+
+.htsv-btn-xoa:hover {
+    background-color: #c82333;
+}
+
+.htsv-error {
+    color: #dc3545;
+    text-align: center;
+    font-weight: bold;
+}
